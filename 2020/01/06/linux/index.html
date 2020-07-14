@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="alternate" href="/atom.xml" title="chenlx" type="application/atom+xml">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="分享根据《Linux性能优化》课程图片整理的笔记。">
+<meta name="keywords" content="linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux 性能优化笔记">
+<meta property="og:url" content="http:&#x2F;&#x2F;chenlixin.site&#x2F;2020&#x2F;01&#x2F;06&#x2F;linux&#x2F;index.html">
+<meta property="og:site_name" content="chenlx">
+<meta property="og:description" content="分享根据《Linux性能优化》课程图片整理的笔记。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.learnku.com&#x2F;uploads&#x2F;images&#x2F;202001&#x2F;05&#x2F;1875&#x2F;qqYo0VWsrr.png!large">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.learnku.com&#x2F;uploads&#x2F;images&#x2F;202001&#x2F;05&#x2F;1875&#x2F;Oz8dERwnge.png!large">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.learnku.com&#x2F;uploads&#x2F;images&#x2F;202001&#x2F;05&#x2F;1875&#x2F;0RmdwBAd5N.png!large">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.learnku.com&#x2F;uploads&#x2F;images&#x2F;202001&#x2F;05&#x2F;1875&#x2F;4snGgzRjRQ.png!large">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.learnku.com&#x2F;uploads&#x2F;images&#x2F;202001&#x2F;05&#x2F;1875&#x2F;LUAA6oVA94.png!large">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.learnku.com&#x2F;uploads&#x2F;images&#x2F;202001&#x2F;05&#x2F;1875&#x2F;4Na11isdnY.png!large">
+<meta property="og:updated_time" content="2020-07-14T05:34:25.103Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.learnku.com&#x2F;uploads&#x2F;images&#x2F;202001&#x2F;05&#x2F;1875&#x2F;qqYo0VWsrr.png!large">
+
+<link rel="canonical" href="http://chenlixin.site/2020/01/06/linux/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Linux 性能优化笔记 | chenlx</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">chenlx</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://chenlixin.site/2020/01/06/linux/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="chenlx">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="chenlx">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Linux 性能优化笔记
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-01-06 08:21:59" itemprop="dateCreated datePublished" datetime="2020-01-06T08:21:59+08:00">2020-01-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-07-14 13:34:25" itemprop="dateModified" datetime="2020-07-14T13:34:25+08:00">2020-07-14</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>分享根据<a href="https://time.geekbang.org/column/intro/140" target="_blank" rel="noopener">《Linux性能优化》</a>课程图片整理的笔记。</p>
+</blockquote>
+<a id="more"></a>
+
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>实验环境：ubuntu 18.04、切换至root权限下操作<br></p>
+<p>查看命令详细使用方法，可以：<strong>man xxx</strong><br>提及到路径的话，一般可以 <strong>cat /x/xx/xxx</strong><br>提及到工具的话，如果没安装，可以：<strong>apt-get install xxx</strong> </p>
+<h2 id="CPU篇"><a href="#CPU篇" class="headerlink" title="CPU篇"></a>CPU篇</h2><h3 id="CPU性能指标"><a href="#CPU性能指标" class="headerlink" title="CPU性能指标"></a>CPU性能指标</h3><p><img src="https://cdn.learnku.com/uploads/images/202001/05/1875/qqYo0VWsrr.png!large" alt="Linux 性能优化"></p>
+<h3 id="根据指标找工具"><a href="#根据指标找工具" class="headerlink" title="根据指标找工具"></a>根据指标找工具</h3><table>
+<thead>
+<tr>
+<th>性能指标</th>
+<th>工具</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>平均负载</td>
+<td>uptime<br>top</td>
+<td>uptime最简单；<br>top提供了更全的指标</td>
+</tr>
+<tr>
+<td>系统整体CPU使用率</td>
+<td>vmstat<br>mpstat<br>top<br>sar<br>/proc/stat</td>
+<td>top、vmstat、mpstat只可以动态查看，<br> <br> /proc/stat/是其他性能工具的数据来源</td>
+</tr>
+<tr>
+<td>进程CPU使用率</td>
+<td>top <br> pidstat <br> ps <br> htop <br> atop</td>
+<td>top和ps可以按CPU使用率给进程排序，<br>而pidstat只显示实际用了CPU的进程 <br><br> htop和atop以不同颜色显示更为直观</td>
+</tr>
+<tr>
+<td>系统上下文切换</td>
+<td>vmstat</td>
+<td>除了上下文切换次数，<br> 还提供运行状态和不可中断状态进程的数量</td>
+</tr>
+<tr>
+<td>进程上下文切换</td>
+<td>pidstat</td>
+<td>注意加上-w 选项</td>
+</tr>
+<tr>
+<td>软中断</td>
+<td>top <br> /proc/softirqs <br> mpstat</td>
+<td>top提供软中断CPU使用率，<br> 而/proc/softirqs和mpstat提供了各种软中断在每个CPU上的运行次数</td>
+</tr>
+<tr>
+<td>硬中断</td>
+<td>vmstat <br> /proc/interrupts</td>
+<td>vmstat提供总的中断次数，<br> 而/proc/interrupts提供各种中断在每个CPU上运行的累积次数</td>
+</tr>
+<tr>
+<td>网络</td>
+<td>dstat <br> sar <br> tcpdump</td>
+<td>dstat和sar提供总的网络接收和发送情况，<br> 而tcpdump则是动态抓取正在进行的网络通讯</td>
+</tr>
+<tr>
+<td>I/O</td>
+<td>dstat <br> sar</td>
+<td>dstat和sar都提供了I/O的整体情况</td>
+</tr>
+<tr>
+<td>CPU个数</td>
+<td>/proc/cpuinfo <br> lscpu</td>
+<td>lscpu更直观</td>
+</tr>
+<tr>
+<td>事件剖析</td>
+<td>perf <br> execsnoop</td>
+<td>perf可以用来分析CPU的缓存以及内核调用链，execsnoop用来监控短时进程</td>
+</tr>
+</tbody></table>
+<h3 id="根据工具查指标"><a href="#根据工具查指标" class="headerlink" title="根据工具查指标"></a>根据工具查指标</h3><table>
+<thead>
+<tr>
+<th>性能工具</th>
+<th>CUP性能指标</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>uptime</td>
+<td>平均负载</td>
+</tr>
+<tr>
+<td>top</td>
+<td>平均负载、运行队列、整体的CPU使用率以及每个进程的状态和 <br> CPU使用率</td>
+</tr>
+<tr>
+<td>htop</td>
+<td>top增强版，以不同颜色区分不同类型的进程，更直观</td>
+</tr>
+<tr>
+<td>atop</td>
+<td>CPU、内存、磁盘和网络等各种资源的全面监控</td>
+</tr>
+<tr>
+<td>vmstat</td>
+<td>系统整体的CPU使用率、上下文切换次数、中断次数、<br> 还包括处于运行和不可中断状态的进程数量</td>
+</tr>
+<tr>
+<td>mpstat</td>
+<td>每个CPU的使用率和软中断次数</td>
+</tr>
+<tr>
+<td>pidstat</td>
+<td>进程和线程的CPU使用率、中断上下文切换次数</td>
+</tr>
+<tr>
+<td>/proc/softirqs</td>
+<td>软中断类型和在每个CPU上的累积中断次数</td>
+</tr>
+<tr>
+<td>/proc/interrupts</td>
+<td>硬中断类型和在每个CPU上的累积中断次数</td>
+</tr>
+<tr>
+<td>ps</td>
+<td>每个进程的状态和CPU使用率</td>
+</tr>
+<tr>
+<td>pstree</td>
+<td>进程的父子关系</td>
+</tr>
+<tr>
+<td>dstat</td>
+<td>系统整体的CPU使用率</td>
+</tr>
+<tr>
+<td>sar</td>
+<td>系统的整体CPU使用率，包括可配置的历史数据</td>
+</tr>
+<tr>
+<td>strace</td>
+<td>进程的系统调用</td>
+</tr>
+<tr>
+<td>perf</td>
+<td>CPU性能事件剖析，如调用链分析、CPU缓存、CPU调度</td>
+</tr>
+<tr>
+<td>execsnoop</td>
+<td>监控短时进程</td>
+</tr>
+</tbody></table>
+<h3 id="CPU性能优化分析"><a href="#CPU性能优化分析" class="headerlink" title="CPU性能优化分析"></a>CPU性能优化分析</h3><p><img src="https://cdn.learnku.com/uploads/images/202001/05/1875/Oz8dERwnge.png!large" alt="Linux 性能优化"></p>
+<h2 id="内存篇"><a href="#内存篇" class="headerlink" title="内存篇"></a>内存篇</h2><h3 id="内存性能指标"><a href="#内存性能指标" class="headerlink" title="内存性能指标"></a>内存性能指标</h3><p><img src="https://cdn.learnku.com/uploads/images/202001/05/1875/0RmdwBAd5N.png!large" alt="Linux 性能优化"></p>
+<h3 id="根据指标找工具-1"><a href="#根据指标找工具-1" class="headerlink" title="根据指标找工具"></a>根据指标找工具</h3><table>
+<thead>
+<tr>
+<th>内存指标</th>
+<th>性能工具</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>系统已用、可用、剩余内存</td>
+<td>free <br> vmstat <br> sar <br> /proc/meminfo</td>
+</tr>
+<tr>
+<td>进程虚拟内存、常驻内存、共享内存</td>
+<td>ps <br> top</td>
+</tr>
+<tr>
+<td>进程内存分布</td>
+<td>pmap</td>
+</tr>
+<tr>
+<td>进程Swap换出内存</td>
+<td>top <br> /proc/pid/status</td>
+</tr>
+<tr>
+<td>进程缺页异常</td>
+<td>ps <br> top</td>
+</tr>
+<tr>
+<td>系统换页情况</td>
+<td>sar</td>
+</tr>
+<tr>
+<td>缓存（Cache）/缓冲区（Buffer）用量</td>
+<td>free <br> vmstat <br> sar <br> cachestat</td>
+</tr>
+<tr>
+<td>缓存（Cache）/缓冲区（Buffer）用量</td>
+<td>cachetop</td>
+</tr>
+<tr>
+<td>SWAP已用空间和剩余空间</td>
+<td>free <br> sar</td>
+</tr>
+<tr>
+<td>Swap换入换出</td>
+<td>vmstat</td>
+</tr>
+<tr>
+<td>内存泄漏检测</td>
+<td>memleak <br> valgrind</td>
+</tr>
+<tr>
+<td>指定文件的缓存大小</td>
+<td>pcstat</td>
+</tr>
+</tbody></table>
+<h3 id="根据工具查指标-1"><a href="#根据工具查指标-1" class="headerlink" title="根据工具查指标"></a>根据工具查指标</h3><table>
+<thead>
+<tr>
+<th>性能工具</th>
+<th>内存指标</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>free <br> /proc/meninfo</td>
+<td>系统已用、可用、剩余内存以及缓存和缓冲区的使用量</td>
+</tr>
+<tr>
+<td>top <br> ps</td>
+<td>进程虚拟、常驻、共享内存以及缺页异常</td>
+</tr>
+<tr>
+<td>vmstat</td>
+<td>系统剩余内存、缓存、缓冲区、换入、换出</td>
+</tr>
+<tr>
+<td>sar</td>
+<td>系统部分内存换页情况、内存使用率、缓存和缓冲区用量 <br> 以及Swap</td>
+</tr>
+<tr>
+<td>cachestat</td>
+<td>系统缓存和缓冲区的命中率</td>
+</tr>
+<tr>
+<td>cachetop</td>
+<td>进程缓存和缓冲区的命中率</td>
+</tr>
+<tr>
+<td>slabtop</td>
+<td>系统Slab缓存使用情况</td>
+</tr>
+<tr>
+<td>/proc/pid/status</td>
+<td>进程Swap内存等</td>
+</tr>
+<tr>
+<td>/proc/pid/smaps <br> pmap</td>
+<td>进程地址空间和内存状态</td>
+</tr>
+<tr>
+<td>valgrind</td>
+<td>进程内存错误检查器，用来检测内存初始化、泄漏、<br> 越界访问等各种内存错误</td>
+</tr>
+<tr>
+<td>memleak</td>
+<td>内存泄漏检测</td>
+</tr>
+<tr>
+<td>pcstat</td>
+<td>查看指定文件的缓存情况</td>
+</tr>
+</tbody></table>
+<h3 id="内存性能优化分析"><a href="#内存性能优化分析" class="headerlink" title="内存性能优化分析"></a>内存性能优化分析</h3><p><img src="https://cdn.learnku.com/uploads/images/202001/05/1875/4snGgzRjRQ.png!large" alt="Linux 性能优化"></p>
+<h2 id="I-O篇"><a href="#I-O篇" class="headerlink" title="I/O篇"></a>I/O篇</h2><h3 id="I-O性能指标"><a href="#I-O性能指标" class="headerlink" title="I/O性能指标"></a>I/O性能指标</h3><p><img src="https://cdn.learnku.com/uploads/images/202001/05/1875/LUAA6oVA94.png!large" alt="Linux 性能优化"></p>
+<h3 id="根据指标找工具-2"><a href="#根据指标找工具-2" class="headerlink" title="根据指标找工具"></a>根据指标找工具</h3><table>
+<thead>
+<tr>
+<th>性能指标</th>
+<th>工具</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>文件系统空间容量、使用量以及剩余空间</td>
+<td>df</td>
+<td>详细文档见 <br> info coreutils ‘df invocation’</td>
+</tr>
+<tr>
+<td>索引结点容量、使用量以及剩余量</td>
+<td>df</td>
+<td>使用 -i 选项</td>
+</tr>
+<tr>
+<td>页面缓存和可回收Slab缓存</td>
+<td>/proc/meminfo <br> sar、vmstat</td>
+<td>使用 sar -r 选项</td>
+</tr>
+<tr>
+<td>缓冲区</td>
+<td>/proc/meminfo <br> sar、vmstat</td>
+<td>使用 sar -r 选项</td>
+</tr>
+<tr>
+<td>目录项、索引节点以及文件系统的缓存</td>
+<td>/proc/slabinfo <br> slabtop</td>
+<td>slabtop更直观</td>
+</tr>
+<tr>
+<td>磁盘I/O使用率、IOPS、<br> 吞吐量、响应时间、I/O平均大小 <br> 以及等待队列长度</td>
+<td>iostat <br> sar、dstat</td>
+<td>使用 iostat -d -x 或 sar -d 选项</td>
+</tr>
+<tr>
+<td>进程I/O大小以及I/O延迟</td>
+<td>pidstat <br> iotop</td>
+<td>使用 pidstat -d 选项</td>
+</tr>
+<tr>
+<td>块设备I/O事件跟踪</td>
+<td>blktrace</td>
+<td>示例：blktrace -d /dev/sda -o- （管道符） blkparse -i-</td>
+</tr>
+<tr>
+<td>进程I/O系统调用跟踪</td>
+<td>strace</td>
+<td>通过系统调用跟踪进程的I/O</td>
+</tr>
+<tr>
+<td>进程块设备I/O大小跟踪</td>
+<td>biosnoop <br> biotop</td>
+<td>需要安装bcc软件包</td>
+</tr>
+</tbody></table>
+<h3 id="根据工具查指标-2"><a href="#根据工具查指标-2" class="headerlink" title="根据工具查指标"></a>根据工具查指标</h3><table>
+<thead>
+<tr>
+<th>性能工具</th>
+<th>性能指标</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>iostat</td>
+<td>磁盘I/O使用率、IOPS、吞吐量、响应时间、I/O平均大小以及等待队列长度</td>
+</tr>
+<tr>
+<td>pidstat</td>
+<td>进程I/O大小以及I/O延迟</td>
+</tr>
+<tr>
+<td>sar</td>
+<td>磁盘I/O使用率、IOPS、吞吐量以及响应时间</td>
+</tr>
+<tr>
+<td>dstat</td>
+<td>磁盘I/O、IPOS以及吞吐量</td>
+</tr>
+<tr>
+<td>iotop</td>
+<td>按I/O大小对进程排序</td>
+</tr>
+<tr>
+<td>slabtop</td>
+<td>目录项、索引结点以及文件系统的缓存</td>
+</tr>
+<tr>
+<td>/proc/slabinfo</td>
+<td>目录项、索引结点以及文件系统的缓存</td>
+</tr>
+<tr>
+<td>/proc/meminfo</td>
+<td>页缓存和可回收Slab缓存</td>
+</tr>
+<tr>
+<td>/proc/diskstats</td>
+<td>磁盘的IOPS、吞吐量以及延迟</td>
+</tr>
+<tr>
+<td>/proc/pid/io</td>
+<td>进程IOPS、I/O大小以及I/O延迟</td>
+</tr>
+<tr>
+<td>vmstat</td>
+<td>缓存和缓冲区用量汇总</td>
+</tr>
+<tr>
+<td>blktrace</td>
+<td>跟踪块设备I/O事件</td>
+</tr>
+<tr>
+<td>biosnoop</td>
+<td>跟踪进程的块设备I/O大小</td>
+</tr>
+<tr>
+<td>biotop</td>
+<td>跟踪进程的并按I/O大小排序</td>
+</tr>
+<tr>
+<td>strace</td>
+<td>跟踪进程的I/O系统调用</td>
+</tr>
+<tr>
+<td>perf</td>
+<td>跟踪内核中的I/O事件</td>
+</tr>
+<tr>
+<td>df</td>
+<td>磁盘空间和索引结点使用量和剩余量</td>
+</tr>
+<tr>
+<td>mount</td>
+<td>文件系统的挂载路径以及挂载参数</td>
+</tr>
+<tr>
+<td>du</td>
+<td>目录占用的磁盘空间大小</td>
+</tr>
+<tr>
+<td>tune2fs</td>
+<td>显示和设置文件系统参数</td>
+</tr>
+<tr>
+<td>hdparam</td>
+<td>显示和设置磁盘参数</td>
+</tr>
+</tbody></table>
+<h3 id="I-O性能优化分析"><a href="#I-O性能优化分析" class="headerlink" title="I/O性能优化分析"></a>I/O性能优化分析</h3><p><img src="https://cdn.learnku.com/uploads/images/202001/05/1875/4Na11isdnY.png!large" alt="Linux 性能优化"></p>
+<h2 id="网络篇"><a href="#网络篇" class="headerlink" title="网络篇"></a>网络篇</h2><h3 id="根据指标找工具-3"><a href="#根据指标找工具-3" class="headerlink" title="根据指标找工具"></a>根据指标找工具</h3><table>
+<thead>
+<tr>
+<th>性能指标</th>
+<th>工具</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>吞吐量（BPS）</td>
+<td>sar <br> nethogs <br> iftop</td>
+<td>分别可以查看网络接口、进程以及IP地址的网络吞吐量</td>
+</tr>
+<tr>
+<td>PPS</td>
+<td>sar <br> /proc/net/dev</td>
+<td>查看网络接口的PPS</td>
+</tr>
+<tr>
+<td>连接数</td>
+<td>nestat <br> ss</td>
+<td>查看网络连接数</td>
+</tr>
+<tr>
+<td>延迟</td>
+<td>ping <br> hping3</td>
+<td>通过ICMP、TCP等测试网络延迟</td>
+</tr>
+<tr>
+<td>连接跟踪数</td>
+<td>conntrack</td>
+<td>查看和管理连接跟踪状况</td>
+</tr>
+<tr>
+<td>路由</td>
+<td>mtr <br> route <br> traceroute</td>
+<td>查看路由并测试链路信息</td>
+</tr>
+<tr>
+<td>DNS</td>
+<td>dig <br> nslookup</td>
+<td>排查DNS解析问题</td>
+</tr>
+<tr>
+<td>防火墙和NAT</td>
+<td>iptables</td>
+<td>配置和管理防火墙及NAT规则</td>
+</tr>
+<tr>
+<td>网卡功能</td>
+<td>ethtool</td>
+<td>查看和配置网络接口的功能</td>
+</tr>
+<tr>
+<td>抓包</td>
+<td>tcpdump <br> Wireshark</td>
+<td>抓包分析网络流量</td>
+</tr>
+<tr>
+<td>内核协议栈跟踪</td>
+<td>bcc <br> systemtap</td>
+<td>动态跟踪内核协议栈的行为</td>
+</tr>
+</tbody></table>
+<h3 id="根据工具查指标-3"><a href="#根据工具查指标-3" class="headerlink" title="根据工具查指标"></a>根据工具查指标</h3><table>
+<thead>
+<tr>
+<th>性能工具</th>
+<th>主要功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ifconfig <br> ip</td>
+<td>配置和查看网络接口</td>
+</tr>
+<tr>
+<td>ss</td>
+<td>查看网络连接数</td>
+</tr>
+<tr>
+<td>sar <br> /proc/net/dev/sys/class/net/eth0/statistics</td>
+<td>查看网络接口的收发情况</td>
+</tr>
+<tr>
+<td>nethogs</td>
+<td>查看进程的网络收发情况</td>
+</tr>
+<tr>
+<td>iftop</td>
+<td>查看IP的网络收发情况</td>
+</tr>
+<tr>
+<td>ethool</td>
+<td>查看和配置网络接口</td>
+</tr>
+<tr>
+<td>conntrack</td>
+<td>查看和管理连接跟踪状况</td>
+</tr>
+<tr>
+<td>nslookup  <br> dig</td>
+<td>排查DNS解析问题</td>
+</tr>
+<tr>
+<td>mtr <br> route <br> traceroute</td>
+<td>查看路由并测试链路信息</td>
+</tr>
+<tr>
+<td>ping <br> hping3</td>
+<td>测试网络延迟</td>
+</tr>
+<tr>
+<td>tcpdump</td>
+<td>网络抓包工具</td>
+</tr>
+<tr>
+<td>Wireshark</td>
+<td>网络抓包和图形界面分析工具</td>
+</tr>
+<tr>
+<td>iptables</td>
+<td>配置和管理防火墙及NAT规则</td>
+</tr>
+<tr>
+<td>perf</td>
+<td>剖析内核协议栈的性能</td>
+</tr>
+<tr>
+<td>systemtap <br> bcc</td>
+<td>动态追踪内核协议栈的行为</td>
+</tr>
+</tbody></table>
+<h2 id="结语-amp-案例"><a href="#结语-amp-案例" class="headerlink" title="结语&amp;案例"></a>结语&amp;案例</h2><p>“纸上得来终觉浅，绝知此事要躬行” 。在此，提供本人实践的课程案例，希望对你有帮助。</p>
+<p><a href="https://learnku.com/articles/39474" target="_blank" rel="noopener">案例：某个应用的 CPU 使用率居然达到 100%，我该怎么办？</a><br><a href="https://learnku.com/articles/39516" target="_blank" rel="noopener">案例：系统的 CPU 使用率很高，但为啥却找不到高 CPU 的应用？</a><br><a href="https://learnku.com/articles/39851" target="_blank" rel="noopener">案例：系统中出现大量不可中断进程（D）和僵尸进程（Z）怎么办？</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/linux/" rel="tag"># linux</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2019/12/27/export/" rel="next" title="导出处理耗时的文件">
+                  <i class="fa fa-chevron-left"></i> 导出处理耗时的文件
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2020/07/10/leetcode/" rel="prev" title="我的 LeetCode">
+                  我的 LeetCode <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CPU篇"><span class="nav-number">2.</span> <span class="nav-text">CPU篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CPU性能指标"><span class="nav-number">2.1.</span> <span class="nav-text">CPU性能指标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#根据指标找工具"><span class="nav-number">2.2.</span> <span class="nav-text">根据指标找工具</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#根据工具查指标"><span class="nav-number">2.3.</span> <span class="nav-text">根据工具查指标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CPU性能优化分析"><span class="nav-number">2.4.</span> <span class="nav-text">CPU性能优化分析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存篇"><span class="nav-number">3.</span> <span class="nav-text">内存篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#内存性能指标"><span class="nav-number">3.1.</span> <span class="nav-text">内存性能指标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#根据指标找工具-1"><span class="nav-number">3.2.</span> <span class="nav-text">根据指标找工具</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#根据工具查指标-1"><span class="nav-number">3.3.</span> <span class="nav-text">根据工具查指标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内存性能优化分析"><span class="nav-number">3.4.</span> <span class="nav-text">内存性能优化分析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#I-O篇"><span class="nav-number">4.</span> <span class="nav-text">I/O篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#I-O性能指标"><span class="nav-number">4.1.</span> <span class="nav-text">I/O性能指标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#根据指标找工具-2"><span class="nav-number">4.2.</span> <span class="nav-text">根据指标找工具</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#根据工具查指标-2"><span class="nav-number">4.3.</span> <span class="nav-text">根据工具查指标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#I-O性能优化分析"><span class="nav-number">4.4.</span> <span class="nav-text">I/O性能优化分析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#网络篇"><span class="nav-number">5.</span> <span class="nav-text">网络篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#根据指标找工具-3"><span class="nav-number">5.1.</span> <span class="nav-text">根据指标找工具</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#根据工具查指标-3"><span class="nav-number">5.2.</span> <span class="nav-text">根据工具查指标</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结语-amp-案例"><span class="nav-number">6.</span> <span class="nav-text">结语&amp;案例</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">chenlx</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">chenlx</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

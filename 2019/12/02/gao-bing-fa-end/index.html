@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="alternate" href="/atom.xml" title="chenlx" type="application/atom+xml">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="由于内容比较多，选择分开记录。">
+<meta name="keywords" content="高并发">
+<meta property="og:type" content="article">
+<meta property="og:title" content="高并发设计笔记（续篇）">
+<meta property="og:url" content="http:&#x2F;&#x2F;chenlixin.site&#x2F;2019&#x2F;12&#x2F;02&#x2F;gao-bing-fa-end&#x2F;index.html">
+<meta property="og:site_name" content="chenlx">
+<meta property="og:description" content="由于内容比较多，选择分开记录。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-07-14T04:53:28.205Z">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://chenlixin.site/2019/12/02/gao-bing-fa-end/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>高并发设计笔记（续篇） | chenlx</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">chenlx</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://chenlixin.site/2019/12/02/gao-bing-fa-end/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="chenlx">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="chenlx">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          高并发设计笔记（续篇）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-12-02 19:37:24" itemprop="dateCreated datePublished" datetime="2019-12-02T19:37:24+08:00">2019-12-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-07-14 12:53:28" itemprop="dateModified" datetime="2020-07-14T12:53:28+08:00">2020-07-14</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>由于内容比较多，选择分开记录。</p>
+</blockquote>
+<a id="more"></a>
+
+<h2 id="分布式服务篇"><a href="#分布式服务篇" class="headerlink" title="分布式服务篇"></a>分布式服务篇</h2><h2 id="系统架构：每秒1万次请求的系统要做服务化拆分吗？"><a href="#系统架构：每秒1万次请求的系统要做服务化拆分吗？" class="headerlink" title="系统架构：每秒1万次请求的系统要做服务化拆分吗？"></a>系统架构：每秒1万次请求的系统要做服务化拆分吗？</h2><p>了解实际业务中会基于什么样的考虑，对系统做微服务化拆分，其实，系统的 QPS 并不是决定性的因素。影响的因素，归纳为以下几点：</p>
+<ul>
+<li>系统中，使用的资源出现扩展性问题，尤其是数据库的连接数出现瓶颈；</li>
+<li>大团队共同维护一套代码，带来研发效率的降低，和研发成本的提升；</li>
+<li>系统部署成本越来越高。</li>
+</ul>
+<p>从中你应该有所感悟：在架构演进的初期和中期，性能、可用性、可扩展性是我们追求的主要目标，高性能和高可用给用户带来更好的使用体验，扩展性可以方便我们支撑更大量级的并发。但是当系统做的越来越大，团队成员越来越多，我们就不得不考虑成本了。</p>
+<p>这里面的“成本”有着复杂的含义，它不仅代表购买服务器的费用，还包括研发团队，内部的开发成本，沟通成本以及运维成本等等，甚至有些时候，成本会成为架构设计中的决定性因素。</p>
+<p>比方说，你做一个直播系统，在架构设计时除了要关注起播速度，还需要关注 CDN 成本；再比如作为团队 Leader，你在日常开发中除了要推进正常的功能需求开发，也要考虑完善工具链建设，提高工程师的研发效率，降低研发成本。</p>
+<p>这很好理解，如果在一个 100 个人的团队中，你的工具为每个人每天节省了 10 分钟，那么加起来就是接近 17 小时，差不多增加了 2 个人工作时间。而正是基于提升扩展性和降低成本的考虑，我们最终走上了微服务化的道路。</p>
+<h2 id="微服务架构：微服务化后，系统架构要如何改造？"><a href="#微服务架构：微服务化后，系统架构要如何改造？" class="headerlink" title="微服务架构：微服务化后，系统架构要如何改造？"></a>微服务架构：微服务化后，系统架构要如何改造？</h2><p>为了能够更好地进行服务化的拆分，需要了解微服务化拆分的原则，此处延伸一些内容：</p>
+<ol>
+<li><p>“康威定律”提到，设计系统的组织，其产生的设计等同于组织间的沟通结构。<strong>通俗一点说，就是你的团队组织结构是什么样的，你的架构就会长成什么样</strong>。如果你的团队分为服务端开发团队，DBA 团队，运维团队，测试团队，那么你的架构就是一体化的，所有的团队共同为一个大系统负责，团队内成员众多，沟通成本就会很高；而如果你想实现微服务化的架构，那么你的团队也要按照业务边界拆分，每一个模块由一个自治的小团队负责，这个小团队里面有开发、测试、运维和 DBA，这样沟通就只发生在这个小团队内部，沟通的成本就会明显降低。</p>
+</li>
+<li><p>微服务化的一个目标是<strong>减少研发的成本</strong>，其中也包括沟通的成本，所以小团队内部成员不宜过多。按照亚马逊 CEO，贝佐斯的“两个披萨”的理论，如果两个披萨不够你的团队吃，那么你的团队就太大了，需要拆分，所以一个小团队包括开发、运维、测试以 6～8 个人为最佳；</p>
+</li>
+<li><p>如果你的团队人数不多，还<strong>没有做好微服务化</strong>的准备，而你又感觉到研发和部署的成本确实比较高，那么一个<strong>折中的方案是，你可以优先做工程的拆分</strong>。<br>比如说，如果你使用的是 Java 语言，你可以依据业务的边界，将代码拆分到不同的子工程中，然后子工程之间以 jar 包的方式依赖，这样每个子工程代码量减少，可以减少打包时间；并且子工程代码内部，可以做到高内聚低耦合，一定程度上减少研发的成本，也不失为一个不错的保守策略。</p>
+</li>
+</ol>
+<h2 id="RPC框架：10万QPS下如何实现毫秒级的服务调用？"><a href="#RPC框架：10万QPS下如何实现毫秒级的服务调用？" class="headerlink" title="RPC框架：10万QPS下如何实现毫秒级的服务调用？"></a>RPC框架：10万QPS下如何实现毫秒级的服务调用？</h2><p>为了优化 RPC 框架的性能，需要了解<strong>网络 I/O 模型</strong>和<strong>序列化方式</strong>的选择，它们是实现高并发 RPC 框架的要素，总结起来有三个要点：</p>
+<ol>
+<li>选择高性能的 I/O 模型，推荐使用同步多路 I/O 复用模型；</li>
+<li>调试网络参数，这里面有一些经验值的推荐。比如将 tcp_nodelay 设置为 true，也有一些参数需要在运行中来调试，比如接受缓冲区和发送缓冲区的大小，客户端连接请求缓冲队列的大小（back log）等等；</li>
+<li>序列化协议依据具体业务来选择。如果对性能要求不高，可以选择 JSON，否则可以从 Thrift 和 Protobuf 中选择其一。</li>
+</ol>
+<p>建议阅读成熟的 RPC 框架的源代码。比如，阿里开源的 Dubbo，微博的 Motan 等等，理解它们的实现原理和细节，这样会更有信心维护好自己的微服务系统；同时，也可以从优秀的代码中，学习到代码设计的技巧，比如说 Dubbo 对于 RPC 的抽象，SPI 扩展点的设计，这样可以有助提升代码能力。</p>
+<h2 id="注册中心：分布式系统如何寻址？"><a href="#注册中心：分布式系统如何寻址？" class="headerlink" title="注册中心：分布式系统如何寻址？"></a>注册中心：分布式系统如何寻址？</h2><p>本章重点：</p>
+<ul>
+<li>注册中心可以让我们动态地，变更 RPC 服务的节点信息，对于动态扩缩容，故障快速恢复，以及服务的优雅关闭都有重要的意义；</li>
+<li>心跳机制是一种常见的探测服务状态的方式，你在实际的项目中也可以考虑使用；</li>
+<li>我们需要对注册中心中管理的节点提供一些保护策略，避免节点被过度摘除导致的服务不可用。</li>
+</ul>
+<p>注册中心虽然是一种简单易懂的分布式组件，但是它在整体架构中的位置至关重要，不容忽视。同时，在它的设计方案中，也蕴含了一些系统设计的技巧，比如上，面提到的服务状态检测的方式，还有上面提到的优雅关闭的方式，了解注册中心的原理，能给研发工作提供一些思路。</p>
+<h2 id="分布式Trace：横跨几十个分布式组件的慢请求要如何排查？"><a href="#分布式Trace：横跨几十个分布式组件的慢请求要如何排查？" class="headerlink" title="分布式Trace：横跨几十个分布式组件的慢请求要如何排查？"></a>分布式Trace：横跨几十个分布式组件的慢请求要如何排查？</h2><p>本章重点：</p>
+<ul>
+<li>服务的追踪的需求主要有两点，一点对代码要无侵入，可以使用切面编程的方式来解决；另一点是性能上要低损耗，建议采用静态代理和日志采样的方式，来尽量减少追踪日志对于系统性能的影响；</li>
+<li>无论是单体系统还是服务化架构，无论是服务追踪还是业务问题排查，都需要在日志中增加 requestId，这样可以将日志串起来，呈现一个完整的问题场景。如果 requestId 可以在客户端上生成，在请求业务接口的时候传递给服务端，那么就可以把客户端的日志体系也整合进来，对于问题的排查帮助更大。</li>
+</ul>
+<p>其实，分布式追踪系统不是一项新的技术，而是若干项已有技术的整合，在实现上并不复杂，却能够帮助实现跨进程调用链展示、服务依赖分析，在性能优化和问题排查方面提供数据上的支持。所以，在微服务化过程中，它是一个必选项，无论是采用 Zipkin，Jaeger 这样的开源解决方案，还是团队内自研，都应该在微服务化完成之前，尽快让它发挥应有的价值。</p>
+<h2 id="负载均衡：怎样提升系统的横向扩展能力？"><a href="#负载均衡：怎样提升系统的横向扩展能力？" class="headerlink" title="负载均衡：怎样提升系统的横向扩展能力？"></a>负载均衡：怎样提升系统的横向扩展能力？</h2><p>本章重点：</p>
+<ul>
+<li><p>网站负载均衡服务的部署，是以 LVS 承接入口流量，在应用服务器之前，部署 Nginx 做细化的流量分发，和故障节点检测。当然，如果你的网站的并发不高，也可以考虑不引入 LVS。</p>
+</li>
+<li><p>负载均衡的策略可以优先选择动态策略，保证请求发送到性能最优的节点上；如果没有合适的动态策略，那么可以选择轮询的策略，让请求平均分配到所有的服务节点上。</p>
+</li>
+<li><p>Nginx 可以引入 nginx_upstream_check_module，对后端服务做定期的存活检测，后端的服务节点在重启时，也要秉承着“先切流量后重启”的原则，尽量减少节点重启对于整体系统的影响。</p>
+</li>
+</ul>
+<p>你可能会认为，像 Nginx、LVS 应该是运维所关心的组件，作为开发人员不用操心维护。其实，负载均衡服务是提升系统扩展性，和性能的重要组件，在高并发系统设计中，它发挥的作用是无法替代的。理解它的原理，掌握使用它的正确姿势，应该是每一个后端开发同学的必修课。</p>
+<h2 id="API网关：系统的门面要如何做呢？"><a href="#API网关：系统的门面要如何做呢？" class="headerlink" title="API网关：系统的门面要如何做呢？"></a>API网关：系统的门面要如何做呢？</h2><p>本章重点：</p>
+<ol>
+<li><p>API 网关分为<strong>入口网关</strong>和<strong>出口网关</strong>两类，入口网关作用很多，可以隔离客户端和微服务，从中提供协议转换、安全策略、认证、限流、熔断等功能。出口网关主要是为调用第三方服务提供统一的出口，在其中可以对调用外部的 API 做统一的认证、授权，审计以及访问控制；</p>
+</li>
+<li><p>API 网关的实现重点在于性能和扩展性，你可以使用<strong>多路 I/O 复用模型</strong>和<strong>线程池并发处理</strong>，来提升网关性能，使用责任链模式来提升网关的扩展性；</p>
+</li>
+<li><p>API 网关中的线程池，可以针对不同的接口或者服务做隔离和保护，这样可以提升网关的可用性；</p>
+</li>
+<li><p>API 网关可以替代原本系统中的 Web 层，将 Web 层中的协议转换、认证、限流等功能挪入到 API 网关中，将服务聚合的逻辑下沉到服务层。</p>
+</li>
+</ol>
+<p>API 网关可以为 API 的调用提供便捷，也可以为将一些服务治理的功能独立出来，达到复用的目的，虽然在性能上可能会有一些损耗，但是一般来说，使用成熟的开源 API 网关组件，这些损耗都是可以接受的。所以，当微服务系统越来越复杂时，可以考虑使用 API 网关作为整体系统的门面。</p>
+<h2 id="多机房部署：跨地域的分布式系统如何做？"><a href="#多机房部署：跨地域的分布式系统如何做？" class="headerlink" title="多机房部署：跨地域的分布式系统如何做？"></a>多机房部署：跨地域的分布式系统如何做？</h2><p>为了提升系统的可用性和稳定性，本章探讨了多机房部署的难点，以及同城双机房和异地多活的部署架构，本章重点：</p>
+<ol>
+<li><p>不同机房的数据传输延迟，是造成多机房部署困难的主要原因，你需要知道，同城多机房的延迟一般在 1ms~3ms，异地机房的延迟在 50ms 以下，而跨国机房的延迟在 200ms 以下。</p>
+</li>
+<li><p>同城多机房方案可以允许有跨机房数据写入的发生，但是数据的读取，和服务的调用应该尽量保证在同一个机房中。</p>
+</li>
+<li><p>异地多活方案则应该避免跨机房同步的数据写入和读取，而是采取异步的方式，将数据从一个机房同步到另一个机房。</p>
+</li>
+</ol>
+<p>多机房部署是一个业务发展到一定规模，对于机房容灾有需求时，才会考虑的方案，能不做则尽量不要做。一旦你的团队决定做多机房部署，那么<strong>同城双活</strong>已经能够满足你的需求了，这个方案相比异地多活要简单很多。<strong>而在业界，很少有公司，能够搭建一套真正的异步多活架构</strong>，这是因为这套架构在实现时过于复杂，<strong>所以，轻易不要尝试</strong>。</p>
+<p>总之，架构需要依据系统的量级和对可用性、性能、扩展性的要求，不断演进和调整，盲目地追求架构的“先进性”只能造成方案的复杂，增加运维成本，从而给系统维护带来不便。</p>
+<h2 id="Service-Mesh：如何屏蔽服务化系统的服务治理细节？"><a href="#Service-Mesh：如何屏蔽服务化系统的服务治理细节？" class="headerlink" title="Service Mesh：如何屏蔽服务化系统的服务治理细节？"></a>Service Mesh：如何屏蔽服务化系统的服务治理细节？</h2><p>本章重点：</p>
+<ol>
+<li>Service Mesh 分为数据平面和控制平面。数据平面主要负责数据的传输；控制平面用来控制服务治理策略的植入。出于性能的考虑，一般会把服务治理策略植入到数据平面中，控制平面负责服务治理策略数据的下发。</li>
+<li>Sidecar 的植入方式目前主要有两种实现方式，一种是使用 iptables 实现流量的劫持；另一种是通过轻量级客户端来实现流量转发。</li>
+</ol>
+<p>目前，在一些大厂中，比如微博、蚂蚁金服，Service Mesh 已经开始在实际项目中大量的落地实践，建议你持续关注这项技术。</p>
+<p>它本身是一种将业务与通信基础设施分离的技术，如果你的业务上遇到多语言环境下，服务治理的困境，如果你的遗留服务，需要快速植入服务治理策略，如果你想要将你在服务治理方面积累的经验，快速地与其他团队共享，那么 Service Mesh 就是一个不错的选择。</p>
+<h2 id="维护篇"><a href="#维护篇" class="headerlink" title="维护篇"></a>维护篇</h2><h2 id="给系统加上眼睛：服务端监控要怎么做？"><a href="#给系统加上眼睛：服务端监控要怎么做？" class="headerlink" title="给系统加上眼睛：服务端监控要怎么做？"></a>给系统加上眼睛：服务端监控要怎么做？</h2><p>本章重点：</p>
+<ol>
+<li><p>耗时、请求量和错误数是三种最通用的监控指标，不同的组件还有一些特殊的监控指标，你在搭建自己的监控系统的时候可以直接使用；</p>
+</li>
+<li><p>Agent、埋点和日志是三种最常见的数据采集方式；</p>
+</li>
+<li><p>访问趋势报表用来展示服务的整体运行情况，性能报表用来分析资源或者依赖的服务是否出现问题，资源报表用来追查资源问题的根本原因。这三个报表共同构成了你的服务端监控体系。</p>
+</li>
+</ol>
+<p>总之，监控系统是你发现问题，排查问题的重要工具，你应该重视它，并且投入足够的精力来不断地完善它。只有这样，才能不断地提高对系统运维的掌控力，降低故障发生的风险。</p>
+<h2 id="未完待续"><a href="#未完待续" class="headerlink" title="未完待续"></a>未完待续</h2>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E9%AB%98%E5%B9%B6%E5%8F%91/" rel="tag"># 高并发</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2019/11/29/lru-cache/" rel="next" title="设计和实现一个 LRU Cache 缓存机制">
+                  <i class="fa fa-chevron-left"></i> 设计和实现一个 LRU Cache 缓存机制
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2019/12/13/0-to-1-k8s/" rel="prev" title="《从 0 到 1：搭建一个完整的 Kubernetes 集群》实践踩坑">
+                  《从 0 到 1：搭建一个完整的 Kubernetes 集群》实践踩坑 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#分布式服务篇"><span class="nav-number">1.</span> <span class="nav-text">分布式服务篇</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#系统架构：每秒1万次请求的系统要做服务化拆分吗？"><span class="nav-number">2.</span> <span class="nav-text">系统架构：每秒1万次请求的系统要做服务化拆分吗？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#微服务架构：微服务化后，系统架构要如何改造？"><span class="nav-number">3.</span> <span class="nav-text">微服务架构：微服务化后，系统架构要如何改造？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RPC框架：10万QPS下如何实现毫秒级的服务调用？"><span class="nav-number">4.</span> <span class="nav-text">RPC框架：10万QPS下如何实现毫秒级的服务调用？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#注册中心：分布式系统如何寻址？"><span class="nav-number">5.</span> <span class="nav-text">注册中心：分布式系统如何寻址？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分布式Trace：横跨几十个分布式组件的慢请求要如何排查？"><span class="nav-number">6.</span> <span class="nav-text">分布式Trace：横跨几十个分布式组件的慢请求要如何排查？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#负载均衡：怎样提升系统的横向扩展能力？"><span class="nav-number">7.</span> <span class="nav-text">负载均衡：怎样提升系统的横向扩展能力？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#API网关：系统的门面要如何做呢？"><span class="nav-number">8.</span> <span class="nav-text">API网关：系统的门面要如何做呢？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多机房部署：跨地域的分布式系统如何做？"><span class="nav-number">9.</span> <span class="nav-text">多机房部署：跨地域的分布式系统如何做？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Service-Mesh：如何屏蔽服务化系统的服务治理细节？"><span class="nav-number">10.</span> <span class="nav-text">Service Mesh：如何屏蔽服务化系统的服务治理细节？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#维护篇"><span class="nav-number">11.</span> <span class="nav-text">维护篇</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#给系统加上眼睛：服务端监控要怎么做？"><span class="nav-number">12.</span> <span class="nav-text">给系统加上眼睛：服务端监控要怎么做？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#未完待续"><span class="nav-number">13.</span> <span class="nav-text">未完待续</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">chenlx</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">chenlx</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -46,18 +46,17 @@
   };
 </script>
 
-  <meta name="description" content="偶然发现域名还没过期，折腾了半天，嘻嘻。">
-<meta name="keywords" content="你好">
+  <meta name="description" content="题目来源于力扣">
 <meta property="og:type" content="article">
-<meta property="og:title" content="你好，世界">
-<meta property="og:url" content="http:&#x2F;&#x2F;chenlixin.site&#x2F;2019&#x2F;11&#x2F;21&#x2F;first-post&#x2F;index.html">
+<meta property="og:title" content="设计和实现一个 LRU Cache 缓存机制">
+<meta property="og:url" content="http:&#x2F;&#x2F;chenlixin.site&#x2F;2019&#x2F;11&#x2F;29&#x2F;lru-cache&#x2F;index.html">
 <meta property="og:site_name" content="chenlx">
-<meta property="og:description" content="偶然发现域名还没过期，折腾了半天，嘻嘻。">
+<meta property="og:description" content="题目来源于力扣">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-11-21T02:52:49.888Z">
+<meta property="og:updated_time" content="2020-07-14T04:47:24.238Z">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://chenlixin.site/2019/11/21/first-post/">
+<link rel="canonical" href="http://chenlixin.site/2019/11/29/lru-cache/">
 
 
 <script id="page-configurations">
@@ -71,7 +70,7 @@
   };
 </script>
 
-  <title>你好，世界 | chenlx</title>
+  <title>设计和实现一个 LRU Cache 缓存机制 | chenlx</title>
   
 
 
@@ -170,7 +169,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://chenlixin.site/2019/11/21/first-post/">
+    <link itemprop="mainEntityOfPage" href="http://chenlixin.site/2019/11/29/lru-cache/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -183,7 +182,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          你好，世界
+          设计和实现一个 LRU Cache 缓存机制
         </h1>
 
         <div class="post-meta">
@@ -192,10 +191,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2019-11-21 10:39:24 / 修改时间：10:52:49" itemprop="dateCreated datePublished" datetime="2019-11-21T10:39:24+08:00">2019-11-21</time>
+              <time title="创建时间：2019-11-29 22:04:43" itemprop="dateCreated datePublished" datetime="2019-11-29T22:04:43+08:00">2019-11-29</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-07-14 12:47:24" itemprop="dateModified" datetime="2020-07-14T12:47:24+08:00">2020-07-14</time>
+              </span>
 
           
 
@@ -208,11 +213,28 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>偶然发现域名还没过期，折腾了半天，嘻嘻。</p>
+        <blockquote>
+<p>题目来源于<a href="https://leetcode-cn.com" target="_blank" rel="noopener">力扣</a></p>
+</blockquote>
 <a id="more"></a>
 
-<p>你好，世界。</p>
-
+<h2 id="理论基础"><a href="#理论基础" class="headerlink" title="理论基础"></a>理论基础</h2><blockquote>
+<p>LRU算法、Cache</p>
+</blockquote>
+<h2 id="实现LRU-Cache缓存机制"><a href="#实现LRU-Cache缓存机制" class="headerlink" title="实现LRU Cache缓存机制"></a>实现LRU Cache缓存机制</h2><p><strong>题目描述</strong></p>
+<blockquote>
+<p>设计和实现一个LRU Cache缓存机制</p>
+</blockquote>
+<p><strong>解题思路</strong></p>
+<ol>
+<li>least recently used 最近最少使用(被淘汰)</li>
+<li>Double LinkedList (双向链表)</li>
+<li>O(1) 查询头部</li>
+<li>O(1) 修改、更新</li>
+<li>实现读、写缓存的操作</li>
+</ol>
+<p><strong>Python 解法</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">class LRUCache(object):</span><br><span class="line">    </span><br><span class="line">    def __init__(self, capacity):</span><br><span class="line">        self.dic = collection.OrderedDict()</span><br><span class="line">        self.remain = capacity</span><br><span class="line">        </span><br><span class="line">    def get(self, key):</span><br><span class="line">        if key not in self.dic:</span><br><span class="line">            return -1</span><br><span class="line">        v = self.dic.pop(key)</span><br><span class="line">        self.dic[key] = v  # 把当前访问的key设置为最新</span><br><span class="line">        return v</span><br><span class="line">        </span><br><span class="line">    def put(self, key, value):</span><br><span class="line">        if key in self.dic:</span><br><span class="line">            self.dic.pop(key)</span><br><span class="line">        else:</span><br><span class="line">            if self.remain &gt; 0:</span><br><span class="line">                self.remain -= 1</span><br><span class="line">            else:  # 如果容量已满</span><br><span class="line">                self.dic.popitem(last=False) # 删除最后一个键值对</span><br><span class="line">        self.dic[key] = value</span><br></pre></td></tr></table></figure>
     </div>
 
     
@@ -220,21 +242,21 @@
     
 
       <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/%E4%BD%A0%E5%A5%BD/" rel="tag"># 你好</a>
-          </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-next post-nav-item">
+                <a href="/2019/11/23/redis/" rel="next" title="Redis 快速上手">
+                  <i class="fa fa-chevron-left"></i> Redis 快速上手
+                </a>
             </div>
 
             <span class="post-nav-divider"></span>
 
             <div class="post-nav-prev post-nav-item">
-                <a href="/2019/11/21/mysql/" rel="prev" title="MySQL 优化笔记">
-                  MySQL 优化笔记 <i class="fa fa-chevron-right"></i>
+                <a href="/2019/12/02/gao-bing-fa-end/" rel="prev" title="高并发设计笔记（续篇）">
+                  高并发设计笔记（续篇） <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>
@@ -274,6 +296,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#理论基础"><span class="nav-number">1.</span> <span class="nav-text">理论基础</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现LRU-Cache缓存机制"><span class="nav-number">2.</span> <span class="nav-text">实现LRU Cache缓存机制</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

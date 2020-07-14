@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="alternate" href="/atom.xml" title="chenlx" type="application/atom+xml">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="从0到1：搭建一个完整的Kubernetes集群 实践踩坑，涉及一些版本问题。">
+<meta name="keywords" content="k8s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《从 0 到 1：搭建一个完整的 Kubernetes 集群》实践踩坑">
+<meta property="og:url" content="http:&#x2F;&#x2F;chenlixin.site&#x2F;2019&#x2F;12&#x2F;13&#x2F;0-to-1-k8s&#x2F;index.html">
+<meta property="og:site_name" content="chenlx">
+<meta property="og:description" content="从0到1：搭建一个完整的Kubernetes集群 实践踩坑，涉及一些版本问题。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.learnku.com&#x2F;uploads&#x2F;images&#x2F;201912&#x2F;13&#x2F;1875&#x2F;d7Kis5ofOv.jpg!large">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.learnku.com&#x2F;uploads&#x2F;images&#x2F;201912&#x2F;13&#x2F;1875&#x2F;k4V29XCIXr.jpg!large">
+<meta property="og:updated_time" content="2020-07-14T04:55:08.598Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.learnku.com&#x2F;uploads&#x2F;images&#x2F;201912&#x2F;13&#x2F;1875&#x2F;d7Kis5ofOv.jpg!large">
+
+<link rel="canonical" href="http://chenlixin.site/2019/12/13/0-to-1-k8s/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>《从 0 到 1：搭建一个完整的 Kubernetes 集群》实践踩坑 | chenlx</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">chenlx</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://chenlixin.site/2019/12/13/0-to-1-k8s/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="chenlx">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="chenlx">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          《从 0 到 1：搭建一个完整的 Kubernetes 集群》实践踩坑
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-12-13 13:37:10" itemprop="dateCreated datePublished" datetime="2019-12-13T13:37:10+08:00">2019-12-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-07-14 12:55:08" itemprop="dateModified" datetime="2020-07-14T12:55:08+08:00">2020-07-14</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p><a href="https://time.geekbang.org/column/article/39724" target="_blank" rel="noopener">从0到1：搭建一个完整的Kubernetes集群</a> 实践踩坑，涉及一些版本问题。</p>
+</blockquote>
+<a id="more"></a>
+
+<h3 id="实验环境"><a href="#实验环境" class="headerlink" title="实验环境"></a>实验环境</h3><p><strong>教程提供配置</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">2 核 CPU、 7.5 GB 内存；</span><br><span class="line">30 GB 磁盘；</span><br><span class="line">Ubuntu 16.04；</span><br><span class="line">内网互通；</span><br><span class="line">外网访问权限不受限制。</span><br></pre></td></tr></table></figure>
+
+<p><strong>实际采用配置</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">windows下的vm虚拟机：</span><br><span class="line"></span><br><span class="line">2 核 CPU、 1 GB 内存；（至少是2核，如果不是，初始化时会检查并报错）</span><br><span class="line">30 GB 磁盘；</span><br><span class="line">Ubuntu 16.04；</span><br><span class="line">内网互通；</span><br><span class="line">外网访问权限不受限制。</span><br></pre></td></tr></table></figure>
+
+<h3 id="安装-kubeadm-和-Docker"><a href="#安装-kubeadm-和-Docker" class="headerlink" title="安装 kubeadm 和 Docker"></a>安装 kubeadm 和 Docker</h3><p><strong>教程提供配置</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -</span><br><span class="line">$ cat &lt;&lt;EOF &gt; /etc/apt/sources.list.d/kubernetes.list</span><br><span class="line">deb http://apt.kubernetes.io/ kubernetes-xenial main</span><br><span class="line">EOF</span><br><span class="line">$ apt-get update</span><br><span class="line">$ apt-get install -y docker.io kubeadm</span><br></pre></td></tr></table></figure>
+<p><strong>实际解决</strong></p>
+<blockquote>
+<p>国内，用阿里云源安装就可以了，速度很快：</p>
+<ol>
+<li>apt-get update &amp;&amp; apt-get install -y apt-transport-https</li>
+<li>curl <a href="https://mirrors.aliyun.com/kubernetes/apt/doc/apt-key.gpg" target="_blank" rel="noopener">https://mirrors.aliyun.com/kubernetes/apt/doc/apt-key.gpg</a> | apt-key add -</li>
+<li>将deb <a href="https://mirrors.aliyun.com/kubernetes/apt/" target="_blank" rel="noopener">https://mirrors.aliyun.com/kubernetes/apt/</a> kubernetes-xenial main 加入到下面文件中，没有就创建 /etc/apt/sources.list.d/kubernetes.list</li>
+<li>apt-get update</li>
+<li>apt-get install -y docker.io kubeadm</li>
+</ol>
+</blockquote>
+<h3 id="部署-Kubernetes-的-Master-节点"><a href="#部署-Kubernetes-的-Master-节点" class="headerlink" title="部署 Kubernetes 的 Master 节点"></a>部署 Kubernetes 的 Master 节点</h3><p><strong>教程提供配置</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: kubeadm.k8s.io/v1alpha1</span><br><span class="line">kind: MasterConfiguration</span><br><span class="line">controllerManagerExtraArgs:</span><br><span class="line">  horizontal-pod-autoscaler-use-rest-clients: &quot;true&quot;</span><br><span class="line">  horizontal-pod-autoscaler-sync-period: &quot;10s&quot;</span><br><span class="line">  node-monitor-grace-period: &quot;10s&quot;</span><br><span class="line">apiServerExtraArgs:</span><br><span class="line">  runtime-config: &quot;api/all=true&quot;</span><br><span class="line">kubernetesVersion: &quot;stable-1.11&quot;</span><br></pre></td></tr></table></figure>
+
+<p>2018.09后，出现版本问题的解决办法</p>
+<blockquote>
+<p>kubeadm最新版本已经为1.12，看到上面很多人遇到提示版本不对，重新安装低版本就好了<br>apt remove kubelet kubectl kubeadm </p>
+<p>apt install kubelet=1.11.3-00 </p>
+<p>apt install kubectl=1.11.3-00 </p>
+<p>apt install kubeadm=1.11.3-00</p>
+<p>如果提示kubernetes-cni版本有问题：</p>
+<p>apt-get install kubeadm=1.11.3-00 kubelet=1.11.3-00 kubectl=1.11.3-00 kubernetes-cni=0.6.0-00</p>
+</blockquote>
+<p>目前（2019.12）已经是 v1.17.0，<strong>尝试</strong>重新安装版本：</p>
+<blockquote>
+<p>apt remove kubelet kubectl kubeadm</p>
+<p>apt-get install kubeadm kubelet kubectl</p>
+</blockquote>
+<p>配置文件也更新为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: kubeadm.k8s.io/v1beta2</span><br><span class="line">kind: ClusterConfiguration</span><br><span class="line">controllerManager:</span><br><span class="line">        ExtraArgs:</span><br><span class="line">                 horizontal-pod-autoscaler-use-rest-clients: &quot;true&quot;</span><br><span class="line">                 horizontal-pod-autoscaler-sync-period: &quot;10s&quot;</span><br><span class="line">                 node-monitor-grace-period: &quot;10s&quot;</span><br><span class="line">apiServer:</span><br><span class="line">        ExtraArgs:</span><br><span class="line">                runtime-config: &quot;api/all=true&quot;</span><br><span class="line">kubernetesVersion: &quot;v.17.0&quot;</span><br></pre></td></tr></table></figure>
+<p><strong>实际解决</strong></p>
+<p>由于初始化总提示没办法下载 k8s.gcr.io 的镜像，网上很多都是采取先下载google镜像后tag的方法，测试发现google镜像里面暂时还没有v1.17的资源，只有v1.15之前的，为避免环境问题，最终还是回到v1.11，按课程走。</p>
+<blockquote>
+<p>apt remove kubelet kubectl kubeadm</p>
+<p>apt-get install kubeadm=1.11.1-00 kubelet=1.11.1-00 kubectl=1.11.1-00 kubernetes-cni=0.6.0-00</p>
+</blockquote>
+<p>下载google镜像</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">docker pull mirrorgooglecontainers/kube-apiserver-amd64:v1.11.1</span><br><span class="line"></span><br><span class="line">docker pull mirrorgooglecontainers/kube-controller-manager-amd64:v1.11.1</span><br><span class="line"></span><br><span class="line">docker pull mirrorgooglecontainers/kube-scheduler-amd64:v1.11.1</span><br><span class="line"></span><br><span class="line">docker pull mirrorgooglecontainers/kube-proxy-amd64:v1.11.1</span><br><span class="line"></span><br><span class="line">docker pull mirrorgooglecontainers/pause:3.1</span><br><span class="line"></span><br><span class="line">docker pull mirrorgooglecontainers/etcd-amd64:3.2.18</span><br><span class="line"></span><br><span class="line">docker pull coredns/coredns:1.1.3</span><br></pre></td></tr></table></figure>
+<p>tag</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">docker tag docker.io/mirrorgooglecontainers/kube-apiserver-amd64:v1.11.1 k8s.gcr.io/kube-apiserver-amd64:v1.11.1</span><br><span class="line"></span><br><span class="line">docker tag docker.io/mirrorgooglecontainers/kube-controller-manager-amd64:v1.11.1 k8s.gcr.io/kube-controller-manager-amd64:v1.11.1</span><br><span class="line"></span><br><span class="line">docker tag docker.io/mirrorgooglecontainers/kube-scheduler-amd64:v1.11.1 k8s.gcr.io/kube-scheduler-amd64:v1.11.1</span><br><span class="line"></span><br><span class="line">docker tag docker.io/mirrorgooglecontainers/kube-proxy-amd64:v1.11.1 k8s.gcr.io/kube-proxy-amd64:v1.11.1</span><br><span class="line"></span><br><span class="line">docker tag docker.io/mirrorgooglecontainers/pause:3.1 k8s.gcr.io/pause:3.1</span><br><span class="line"></span><br><span class="line">docker tag docker.io/mirrorgooglecontainers/etcd-amd64:3.2.18 k8s.gcr.io/etcd-amd64:3.2.18</span><br><span class="line"></span><br><span class="line">docker tag docker.io/coredns/coredns:1.1.3 k8s.gcr.io/coredns:1.1.3</span><br></pre></td></tr></table></figure>
+
+<p>swapoff -a</p>
+<p>kubeadm init –config kubeadm.yaml –ignore-preflight-errors=SystemVerification</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"># 初始化成功！显示以下信息</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">Your Kubernetes master has initialized successfully!</span><br><span class="line"></span><br><span class="line">To start using your cluster, you need to run the following as a regular user:</span><br><span class="line"></span><br><span class="line">  mkdir -p $HOME/.kube</span><br><span class="line">  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config</span><br><span class="line">  sudo chown $(id -u):$(id -g) $HOME/.kube/config</span><br><span class="line"></span><br><span class="line">You should now deploy a pod network to the cluster.</span><br><span class="line">Run &quot;kubectl apply -f [podnetwork].yaml&quot; with one of the options listed at:</span><br><span class="line">  https://kubernetes.io/docs/concepts/cluster-administration/addons/</span><br><span class="line"></span><br><span class="line">You can now join any number of machines by running the following on each node</span><br><span class="line">as root:</span><br><span class="line"></span><br><span class="line">  kubeadm join 192.168.139.136:6443 --token 7ypgpe.qzgh5fs0rga7n9bf --discovery-token-ca-cert-hash sha256:bb0bc404012e9b61e905da6cc2f3028f2625c823                                            2e3d616478b98ba3124558f5</span><br></pre></td></tr></table></figure>
+
+
+
+<p>kubeadm 会提示我们第一次使用 Kubernetes 集群所需要的配置命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p $HOME/.kube</span><br><span class="line">sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config</span><br><span class="line">sudo chown $(id -u):$(id -g) $HOME/.kube/config</span><br></pre></td></tr></table></figure>
+<p>而需要这些配置命令的原因是：Kubernetes 集群默认需要加密方式访问。所以，这几条命令，就是将刚刚部署生成的 Kubernetes 集群的安全配置文件，保存到当前用户的.kube 目录下，kubectl 默认会使用这个目录下的授权信息访问 Kubernetes 集群。</p>
+<p>如果不这么做的话，我们每次都需要通过 export KUBECONFIG 环境变量告诉 kubectl 这个安全配置文件的位置。</p>
+<p><strong>常用管理命令</strong></p>
+<p>查看当前节的状态 </p>
+<p><strong>kubectl get nodes</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">NAME      STATUS     ROLES     AGE       VERSION</span><br><span class="line">ubuntu    NotReady   master    27m       v1.11.1</span><br></pre></td></tr></table></figure>
+
+<p>在调试 Kubernetes 集群时，最重要的手段就是用 kubectl describe 来查看这个节点（Node）对象的详细信息、状态和事件（Event），我们来试一下：</p>
+<p><strong>kubectl describe node ubuntu</strong></p>
+<p>另外，我们还可以通过 kubectl 检查这个节点上各个系统 Pod 的状态，其中，kube-system 是 Kubernetes 项目预留的系统 Pod 的工作空间（Namepsace，注意它并不是 Linux Namespace，它只是 Kubernetes 划分不同工作空间的单位）：</p>
+<p><strong>kubectl get pods -n kube-system</strong></p>
+<h3 id="部署网络插件"><a href="#部署网络插件" class="headerlink" title="部署网络插件"></a>部署网络插件</h3><p>以 Weave 为例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f https://git.io/weave-kube-1.6</span><br></pre></td></tr></table></figure>
+
+<p>部署完成后，我们可以通过 kubectl get 重新检查 Pod 的状态：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">NAME                             READY     STATUS    RESTARTS   AGE</span><br><span class="line">coredns-78fcdf6894-2lc2v         1/1       Running   0          1h</span><br><span class="line">coredns-78fcdf6894-rjj9r         1/1       Running   0          1h</span><br><span class="line">etcd-ubuntu                      1/1       Running   0          1h</span><br><span class="line">kube-apiserver-ubuntu            1/1       Running   0          1h</span><br><span class="line">kube-controller-manager-ubuntu   1/1       Running   0          1h</span><br><span class="line">kube-proxy-z9fqz                 1/1       Running   0          1h</span><br><span class="line">kube-scheduler-ubuntu            1/1       Running   0          1h</span><br><span class="line">weave-net-p4fh2                  2/2       Running   0          51m</span><br></pre></td></tr></table></figure>
+
+<p>至此，Kubernetes 的 Master 节点就部署完成了。如果你只需要一个单节点的 Kubernetes，现在你就可以使用了。不过，在默认情况下，Kubernetes 的 Master 节点是不能运行用户 Pod 的，所以还需要额外做一个小操作。</p>
+<h3 id="部署-Kubernetes-的-Worker-节点"><a href="#部署-Kubernetes-的-Worker-节点" class="headerlink" title="部署 Kubernetes 的 Worker 节点"></a>部署 Kubernetes 的 Worker 节点</h3><p>Kubernetes 的 Worker 节点跟 Master 节点几乎是相同的，它们运行着的都是一个 kubelet 组件。唯一的区别在于，在 kubeadm init 的过程中，kubelet 启动后，Master 节点上还会自动运行 kube-apiserver、kube-scheduler、kube-controller-manger 这三个系统 Pod。</p>
+<p>所以，相比之下，部署 Worker 节点反而是最简单的，只需要两步即可完成。</p>
+<p>第一步，在所有 Worker 节点上执行“安装 kubeadm 和 Docker”一节的所有步骤。</p>
+<p>第二步，执行部署 Master 节点时生成的 kubeadm join 指令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm join 192.168.139.136:6443 --token 7ypgpe.qzgh5fs0rga7n9bf --discovery-token-ca-cert-hash sha256:bb0bc404012e9b61e905da6cc2f3028f2625c823                                            2e3d616478b98ba3124558f5</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="通过-Taint-Toleration-调整-Master-执行-Pod-的策略"><a href="#通过-Taint-Toleration-调整-Master-执行-Pod-的策略" class="headerlink" title="通过 Taint/Toleration 调整 Master 执行 Pod 的策略"></a>通过 Taint/Toleration 调整 Master 执行 Pod 的策略</h3><p>默认情况下 Master 节点是不允许运行用户 Pod 的。而 Kubernetes 做到这一点，依靠的是 Kubernetes 的 Taint/Toleration 机制。</p>
+<p>这部分属于策略配置问题，自行搜索解决。</p>
+<h3 id="部署-Dashboard-可视化插件"><a href="#部署-Dashboard-可视化插件" class="headerlink" title="部署 Dashboard 可视化插件"></a>部署 Dashboard 可视化插件</h3><p>在 Kubernetes 社区中，有一个很受欢迎的 Dashboard 项目，它可以给用户提供一个可视化的 Web 界面来查看当前集群的各种信息。毫不意外，它的部署也相当简单：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">教程给的地址已失效，以下可用</span><br><span class="line">kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v1.10.0/src/deploy/recommended/kubernetes-dashboard.yaml</span><br><span class="line"></span><br><span class="line">或者将配置复制到本地文件</span><br><span class="line">kubectl apply -f dashboard.yaml</span><br></pre></td></tr></table></figure>
+<p>由于本次实验是vm里面的虚拟机，windows主机无法访问dashboard，<strong>教程提到</strong>：如果想从集群外访问这个 Dashboard 的话，需要用到 Ingress。</p>
+<h3 id="部署容器存储插件"><a href="#部署容器存储插件" class="headerlink" title="部署容器存储插件"></a>部署容器存储插件</h3><p>Kubernetes 集群的最后一块拼图：容器持久化存储。</p>
+<p>很多时候我们需要用数据卷（Volume）把外面宿主机上的目录或者文件挂载进容器的 Mount Namespace 中，从而达到容器和宿主机共享这些目录或者文件的目的。容器里的应用，也就可以在这些数据卷中新建和写入文件。</p>
+<p>由于 Kubernetes 本身的松耦合设计，绝大多数存储项目，比如 Ceph、GlusterFS、NFS 等，都可以为 Kubernetes 提供持久化存储能力。在这次的部署实战中，<strong>教程</strong>选择部署一个很重要的 Kubernetes 存储插件项目：Rook。</p>
+<p>Rook 项目是一个基于 Ceph 的 Kubernetes 存储插件（它后期也在加入对更多存储实现的支持）。不过，不同于对 Ceph 的简单封装，Rook 在自己的实现中加入了水平扩展、迁移、灾难备份、监控等大量的企业级功能，使得这个项目变成了一个完整的、生产级别可用的容器存储插件。</p>
+<p>得益于容器化技术，用两条指令，Rook 就可以把复杂的 Ceph 存储后端部署起来：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f https://raw.githubusercontent.com/rook/rook/master/cluster/examples/kubernetes/ceph/operator.yaml</span><br><span class="line"></span><br><span class="line">kubectl apply -f https://raw.githubusercontent.com/rook/rook/master/cluster/examples/kubernetes/ceph/cluster.yaml</span><br></pre></td></tr></table></figure>
+<p>这样，一个基于 Rook 持久化存储集群就以容器的方式运行起来了，而接下来在 Kubernetes 项目上创建的所有 Pod 就能够通过 Persistent Volume（PV）和 Persistent Volume Claim（PVC）的方式，在容器里挂载由 Ceph 提供的数据卷了。</p>
+<p>而 Rook 项目，则会负责这些数据卷的生命周期管理、灾难备份等运维工作。</p>
+<h3 id="可能遇到的问题"><a href="#可能遇到的问题" class="headerlink" title="可能遇到的问题"></a>可能遇到的问题</h3><p>master宕机重启后引起的coredns Error：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl -n kube-system get deployment coredns -o yaml | \</span><br><span class="line">  sed &apos;s/allowPrivilegeEscalation: false/allowPrivilegeEscalation: true/g&apos; | \</span><br><span class="line">  kubectl apply -f -</span><br></pre></td></tr></table></figure>
+
+<p>尝试将work节点加入master的过程：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">token可能过期</span><br><span class="line">## master上执行</span><br><span class="line">kubeadm token list 查看所有token</span><br><span class="line">kubeadm token create 重新生成</span><br><span class="line">kubeadm token create --print-join-command  重新生成并打印join的命令</span><br><span class="line"></span><br><span class="line">worker端口可能被占用</span><br><span class="line">netstat -ltnp</span><br><span class="line">kill -9 XXX</span><br><span class="line"></span><br><span class="line">worker 操作过join并且已有配置文件产生</span><br><span class="line">kubeadm reset 或者 删除相应提示的配置</span><br><span class="line">kubeadm join 192.168.139.136:6443 --token adwc73.dhfggnt6f3xlqbyl --discovery-token-ca-cert-hash sha256:bb0bc404012e9b61e905da6cc2f3028f2625c8232e3d616478b98ba3124558f5 --ignore-preflight-errors=SystemVerification</span><br></pre></td></tr></table></figure>
+
+<h3 id="实验结论"><a href="#实验结论" class="headerlink" title="实验结论"></a>实验结论</h3><p>实际上，整个k8s集群，只成功部署了master（包括网络插件、可视化插件、存储插件），在worker join的过程，也提示docker版本的问题，忽略之后，有提示该节点已加入集群，如下：<br><img src="https://cdn.learnku.com/uploads/images/201912/13/1875/d7Kis5ofOv.jpg!large" alt="kubeadm实践踩坑"><br>但master上始终没看到worker的信息。查看master的日志，如下：<br><img src="https://cdn.learnku.com/uploads/images/201912/13/1875/k4V29XCIXr.jpg!large" alt="kubeadm实践踩坑"><br>从上面信息来看，个人认为是版本问题，毕竟v1.11.1是一年前的版本。</p>
+<p>我尽力了，虽然暂时没有成功，或者等我学习更多k8s的知识，我能解决目前的问题。</p>
+<p>如果有基于<strong>ubuntu16.04、k8s v1.11.1</strong>搭建成功的小伙伴，也可以给我留言。</p>
+<p>其实网上有很多基于centos搭建成功的，可以参考。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/k8s/" rel="tag"># k8s</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2019/12/02/gao-bing-fa-end/" rel="next" title="高并发设计笔记（续篇）">
+                  <i class="fa fa-chevron-left"></i> 高并发设计笔记（续篇）
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2019/12/17/mq/" rel="prev" title="消息队列学习脑图">
+                  消息队列学习脑图 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#实验环境"><span class="nav-number">1.</span> <span class="nav-text">实验环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装-kubeadm-和-Docker"><span class="nav-number">2.</span> <span class="nav-text">安装 kubeadm 和 Docker</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#部署-Kubernetes-的-Master-节点"><span class="nav-number">3.</span> <span class="nav-text">部署 Kubernetes 的 Master 节点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#部署网络插件"><span class="nav-number">4.</span> <span class="nav-text">部署网络插件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#部署-Kubernetes-的-Worker-节点"><span class="nav-number">5.</span> <span class="nav-text">部署 Kubernetes 的 Worker 节点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#通过-Taint-Toleration-调整-Master-执行-Pod-的策略"><span class="nav-number">6.</span> <span class="nav-text">通过 Taint/Toleration 调整 Master 执行 Pod 的策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#部署-Dashboard-可视化插件"><span class="nav-number">7.</span> <span class="nav-text">部署 Dashboard 可视化插件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#部署容器存储插件"><span class="nav-number">8.</span> <span class="nav-text">部署容器存储插件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#可能遇到的问题"><span class="nav-number">9.</span> <span class="nav-text">可能遇到的问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实验结论"><span class="nav-number">10.</span> <span class="nav-text">实验结论</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">chenlx</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">chenlx</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

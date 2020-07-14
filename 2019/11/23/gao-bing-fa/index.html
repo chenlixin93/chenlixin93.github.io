@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="alternate" href="/atom.xml" title="chenlx" type="application/atom+xml">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="仅提炼课程小结，分享设计思路，有兴趣的也可以去购买学习该门课程 《高并发系统设计》">
+<meta name="keywords" content="高并发">
+<meta property="og:type" content="article">
+<meta property="og:title" content="高并发设计笔记">
+<meta property="og:url" content="http:&#x2F;&#x2F;chenlixin.site&#x2F;2019&#x2F;11&#x2F;23&#x2F;gao-bing-fa&#x2F;index.html">
+<meta property="og:site_name" content="chenlx">
+<meta property="og:description" content="仅提炼课程小结，分享设计思路，有兴趣的也可以去购买学习该门课程 《高并发系统设计》">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-07-14T04:53:37.894Z">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://chenlixin.site/2019/11/23/gao-bing-fa/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>高并发设计笔记 | chenlx</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">chenlx</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://chenlixin.site/2019/11/23/gao-bing-fa/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="chenlx">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="chenlx">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          高并发设计笔记
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-11-23 00:51:25" itemprop="dateCreated datePublished" datetime="2019-11-23T00:51:25+08:00">2019-11-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-07-14 12:53:37" itemprop="dateModified" datetime="2020-07-14T12:53:37+08:00">2020-07-14</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>仅提炼课程小结，分享设计思路，有兴趣的也可以去购买学习该门课程 <a href="https://time.geekbang.org/column/intro/230" target="_blank" rel="noopener">《高并发系统设计》</a></p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="基础篇"><a href="#基础篇" class="headerlink" title="基础篇"></a>基础篇</h1><h2 id="高并发系统：它的通用设计方法是什么？"><a href="#高并发系统：它的通用设计方法是什么？" class="headerlink" title="高并发系统：它的通用设计方法是什么？"></a>高并发系统：它的通用设计方法是什么？</h2><p>高并发系统设计的三种通用方法：<strong>Scale-out、缓存和异步</strong>。</p>
+<p>这三种方法可以在做方案设计时灵活地运用，但它不是具体实施的方案，而是三种思想，在实际运用中会千变万化。</p>
+<p>就拿 <strong>Scale-out</strong> 来说，数据库一主多从、分库分表、存储分片都是它的实际应用方案。</p>
+<p>需要注意的是，在应对高并发大流量的时候，系统是可以通过增加机器来承担流量冲击的，至于要采用什么样的方案还是要具体问题具体分析。</p>
+<h2 id="架构分层：我们为什么一定要这么做？"><a href="#架构分层：我们为什么一定要这么做？" class="headerlink" title="架构分层：我们为什么一定要这么做？"></a>架构分层：我们为什么一定要这么做？</h2><p>分层架构是软件设计思想的外在体现，是一种实现方式。我们熟知的一些软件设计原则都在分层架构中有所体现。</p>
+<p>比方说，<strong>单一职责原则</strong>规定每个类只有单一的功能，在这里可以引申为每一层拥有单一职责，且层与层之间边界清晰；</p>
+<p><strong>迪米特法则</strong>原意是一个对象应当对其它对象有尽可能少的了解，在分层架构的体现是数据的交互不能跨层，只能在相邻层之间进行；</p>
+<p><strong>开闭原则</strong>要求软件对扩展开放，对修改关闭。它的含义其实就是将抽象层和实现层分离，抽象层是对实现层共有特征的归纳总结，不可以修改，但是具体的实现是可以无限扩展，随意替换的。</p>
+<p>掌握这些设计思想会自然而然地明白分层架构设计的妙处，同时也能帮助我们做出更好的设计方案。</p>
+<h2 id="系统设计目标（一）：如何提升系统性能？"><a href="#系统设计目标（一）：如何提升系统性能？" class="headerlink" title="系统设计目标（一）：如何提升系统性能？"></a>系统设计目标（一）：如何提升系统性能？</h2><p>有时候你在遇到性能问题的时候会束手无策，需要强调几点：</p>
+<ul>
+<li>数据优先，做一个新的系统在上线之前一定要把性能监控系统做好；</li>
+<li>掌握一些性能优化工具和方法，这就需要在工作中不断的积累；</li>
+<li>计算机基础知识很重要，比如说网络知识、操作系统知识等等，掌握了基础知识才能让你在优化过程中抓住性能问题的关键，也能在性能优化过程中游刃有余。</li>
+</ul>
+<p>性能优化是一个很大的话题，比方说如何用缓存优化系统的读取性能，如何使用消息队列优化系统的写入性能等等。</p>
+<h2 id="系统设计目标（二）：系统怎样做到高可用？"><a href="#系统设计目标（二）：系统怎样做到高可用？" class="headerlink" title="系统设计目标（二）：系统怎样做到高可用？"></a>系统设计目标（二）：系统怎样做到高可用？</h2><p>从开发和运维角度上来看，提升可用性的方法是不同的：</p>
+<p><strong>开发</strong>注重的是如何处理故障，关键词是冗余和取舍。冗余指的是有备用节点，集群来顶替出故障的服务，比如文中提到的故障转移，还有多活架构等等；取舍指的是丢卒保车，保障主体服务的安全。</p>
+<p>从<strong>运维角度</strong>来看则更偏保守，注重的是如何避免故障的发生，比如更关注变更管理以及如何做故障的演练。</p>
+<p>两者结合起来才能组成一套完善的高可用体系。</p>
+<p>需要注意的是，提高系统的可用性有时候是以<strong>牺牲用户体验</strong>或者是<strong>牺牲系统性能</strong>为前提的，也需要大量人力来建设相应的系统，完善机制。所以要把握一个度，不该做过度的优化。</p>
+<p>另外，一般的系统或者组件都是追求极致的性能的，那么有没有不追求性能，只追求极致的可用性的呢？</p>
+<p>答案是有的。</p>
+<p>比如配置下发的系统，它只需要在其它系统启动时提供一份配置即可，所以秒级返回也可，十秒钟也 OK，无非就是增加了其它系统的启动时间而已。但是，它对可用性的要求是极高的，甚至会到六个九，原因是配置可以获取的慢，但是不能获取不到。这个例子说明，可用性和性能有时候是需要做取舍的，但如何取舍就要视不同的系统而定，不能一概而论了。</p>
+<h2 id="系统设计目标（三）：如何让系统易于扩展？"><a href="#系统设计目标（三）：如何让系统易于扩展？" class="headerlink" title="系统设计目标（三）：如何让系统易于扩展？"></a>系统设计目标（三）：如何让系统易于扩展？</h2><p>未做拆分的系统虽然可扩展性不强，但是却足够简单，无论是系统开发还是运行维护都不需要投入很大的精力。</p>
+<p>拆分之后，需求开发需要横跨多个系统多个小团队，排查问题也需要涉及多个系统，运行维护上，可能每个子系统都需要有专人来负责，对于团队是一个比较大的考验。</p>
+<h1 id="数据库篇"><a href="#数据库篇" class="headerlink" title="数据库篇"></a>数据库篇</h1><h2 id="池化技术：如何减少频繁创建数据库连接的性能损耗？"><a href="#池化技术：如何减少频繁创建数据库连接的性能损耗？" class="headerlink" title="池化技术：如何减少频繁创建数据库连接的性能损耗？"></a>池化技术：如何减少频繁创建数据库连接的性能损耗？</h2><p>案列：垂直电商系统中，在遇到数据库查询性能下降的问题时，使用数据库连接池解决了频繁创建连接带来的性能问题，使用线程池提升了并行查询数据库的性能。</p>
+<p>其实，连接池和线程池你并不陌生，本章强调的重点是：</p>
+<ul>
+<li><p>池子的最大值和最小值的设置很重要，初期可以依据经验来设置，后面还是需要根据实际运行情况做调整。</p>
+</li>
+<li><p>池子中的对象需要在使用之前预先初始化完成，这叫做池子的预热，比方说使用线程池时就需要预先初始化所有的核心线程。如果池子未经过预热可能会导致系统重启后产生比较多的慢请求。</p>
+</li>
+<li><p>池化技术核心是一种空间换时间优化方法的实践，所以要关注空间占用情况，避免出现空间过度使用出现内存泄露或者频繁垃圾回收等问题。</p>
+</li>
+</ul>
+<h2 id="数据库优化方案（一）：查询请求增加时，如何做主从分离？"><a href="#数据库优化方案（一）：查询请求增加时，如何做主从分离？" class="headerlink" title="数据库优化方案（一）：查询请求增加时，如何做主从分离？"></a>数据库优化方案（一）：查询请求增加时，如何做主从分离？</h2><p>查询量增加时，可以通过主从分离和一主多从部署抵抗增加的数据库流量的，除了掌握主从复制的技术之外，还需要了解主从分离会带来什么问题以及它们的解决办法。本章明确的要点主要有：</p>
+<ol>
+<li>主从读写分离以及部署一主多从可以解决突发的数据库读流量，是一种数据库横向扩展的方法；</li>
+<li>读写分离后，主从的延迟是一个关键的监控指标，可能会造成写入数据之后立刻读的时候读取不到的情况；</li>
+<li>业界有很多的方案可以屏蔽主从分离之后数据库访问的细节，让开发人员像是访问单一数据库一样，包括有像 TDDL、Sharding-JDBC 这样的嵌入应用内部的方案，也有像 Mycat 这样的独立部署的代理方案。</li>
+</ol>
+<p>其实，我们可以把主从复制引申为存储节点之间互相复制存储数据的技术，它可以实现数据的冗余，以达到备份和提升横向扩展能力的作用。在使用<strong>主从复制</strong>这个技术点时，你一般会考虑两个问题：</p>
+<ol>
+<li><p>主从的一致性和写入性能的权衡，如果要保证所有从节点都写入成功，那么写入性能一定会受影响；如果只写入主节点就返回成功，那么从节点就有可能出现数据同步失败的情况，从而造成主从不一致，而在互联网的项目中，一般会<strong>优先考虑性能</strong>而不是数据的强一致性。</p>
+</li>
+<li><p>主从的延迟问题，很多诡异的读取不到数据的问题都可能会和它有关，如果遇到这类问题不妨先看看主从延迟的数据。</p>
+</li>
+</ol>
+<p>很多组件都会使用到这个技术，比如，<br>Redis 也是通过主从复制实现读写分离；Elasticsearch 中存储的索引分片也可以被复制到多个节点中；写入到 HDFS 中文件也会被复制到多个 DataNode 中。</p>
+<p>只是不同的组件对于复制的一致性、延迟要求不同，采用的方案也不同。不过，这种设计的思想是通用的。</p>
+<h2 id="数据库优化方案（二）：写入数据量增加时，如何实现分库分表？"><a href="#数据库优化方案（二）：写入数据量增加时，如何实现分库分表？" class="headerlink" title="数据库优化方案（二）：写入数据量增加时，如何实现分库分表？"></a>数据库优化方案（二）：写入数据量增加时，如何实现分库分表？</h2><p>总的来说，在面对数据库容量瓶颈和写并发量大的问题时，可以采用<strong>垂直拆分和水平拆分</strong>来解决，不过要注意，这两种方式虽然能够解决问题，但是也会引入诸如查询数据必须带上分区键，列表总数需要单独冗余存储等问题。</p>
+<p>而且，需要了解的是在实现分库分表过程中，数据从单库单表迁移多库多表是一件即繁杂又容易出错的事情，而且如果初期没有规划得当，后面要继续增加数据库数或者表数时，还要经历这个迁移的过程。所以，对于分库分表的原则主要有以下几点：</p>
+<ol>
+<li>如果在性能上没有瓶颈点那么就尽量不做分库分表；</li>
+<li>如果要做，就尽量一次到位，比如说 16 库，每个库 64 表就基本能够满足为了几年内你的业务的需求。</li>
+<li>很多的 NoSQL 数据库，例如 Hbase，MongoDB 都提供 auto sharding 的特性，如果团队内部对于这些组件比较熟悉，有较强的运维能力，那么也可以考虑使用这些 NoSQL 数据库替代传统的关系型数据库。</li>
+</ol>
+<p>其实，有很多人并没有真正从根本上搞懂为什么要拆分，拆分后会带来哪些问题，只是一味地学习大厂现有的拆分方法，从而导致问题频出。所以，在使用一个方案解决一个问题的时候一定要弄清楚原理，搞清楚这个方案会带来什么问题，要如何来解决，要知其然也知其所以然，这样才能在解决问题的同时避免踩坑。</p>
+<h2 id="发号器：如何保证分库分表后ID的全局唯一性？"><a href="#发号器：如何保证分库分表后ID的全局唯一性？" class="headerlink" title="发号器：如何保证分库分表后ID的全局唯一性？"></a>发号器：如何保证分库分表后ID的全局唯一性？</h2><p>使用 Snowflake 算法解决分库分表后数据库 ID 的全局唯一的问题，<br>生成的 ID 需要满足单调递增性，以及要具有一定业务含义的特性。</p>
+<p>本章重点在于如何将 Snowflake 算法落地，以及在落地过程中遇到了哪些坑，如何去解决它。</p>
+<p>Snowflake 的算法并不复杂，在使用的时候可以不考虑独立部署的问题，先想清楚按照自身的业务场景，需要如何设计 Snowflake 算法中的每一部分占的二进制位数。比如你的业务会部署几个 IDC，应用服务器要部署多少台机器，每秒钟发号个数的要求是多少等等，然后在业务代码中实现一个简单的版本先使用，等到应用服务器数量达到一定规模，再考虑独立部署的问题就可以了。这样可以避免多维护一套发号器服务，减少了运维上的复杂</p>
+<h2 id="NoSQL：在高并发场景下，数据库和NoSQL如何做到互补？"><a href="#NoSQL：在高并发场景下，数据库和NoSQL如何做到互补？" class="headerlink" title="NoSQL：在高并发场景下，数据库和NoSQL如何做到互补？"></a>NoSQL：在高并发场景下，数据库和NoSQL如何做到互补？</h2><p>NoSQL 数据库在性能、扩展性上的优势，以及它的一些特殊功能特性，主要有以下几点：</p>
+<ol>
+<li>在性能方面，NoSQL 数据库使用一些算法将对磁盘的随机写转换成顺序写，提升了写的性能；</li>
+<li>在某些场景下，比如全文搜索功能，关系型数据库并不能高效地支持，需要 NoSQL 数据库的支持；</li>
+<li>在扩展性方面，NoSQL 数据库天生支持分布式，支持数据冗余和数据分片的特性。</li>
+</ol>
+<p>这些都让它成为传统关系型数据库的良好的补充，需要了解的是，NoSQL 可供选型的种类很多，每一个组件都有各自的特点。在做选型的时候需要对它的实现原理有比较深入的了解，最好在运维方面对它有一定的熟悉，这样在出现问题时才能及时找到解决方案。否则，盲目跟从地上了一个新的 NoSQL 数据库，最终可能导致会出了故障无法解决，反而成为整体系统的拖累。</p>
+<p>案例：曾经使用 Elasticsearch 作为持久存储，支撑社区的 feed 流功能，初期开发的时候确实很爽，可以针对 feed 中的任何字段做灵活高效地查询，业务功能迭代迅速，代码也简单易懂。可是到了后期流量上来之后，由于缺少对于 Elasticsearch 成熟的运维能力，造成故障频出，尤其到了高峰期就会出现节点不可用的问题，而由于业务上的巨大压力又无法分出人力和精力对 Elasticsearch 深入的学习和了解，最后不得不做大的改造切回熟悉的 MySQL。所以，对于开源组件的使用，不能只停留在只会“hello world”的阶段，而应该对它有足够的运维上的把控能力。</p>
+<h1 id="缓存篇"><a href="#缓存篇" class="headerlink" title="缓存篇"></a>缓存篇</h1><h2 id="缓存：数据库成为瓶颈后，动态数据的查询要如何加速？"><a href="#缓存：数据库成为瓶颈后，动态数据的查询要如何加速？" class="headerlink" title="缓存：数据库成为瓶颈后，动态数据的查询要如何加速？"></a>缓存：数据库成为瓶颈后，动态数据的查询要如何加速？</h2><p>了解缓存的定义，常见缓存的分类以及缓存的不足。本章主要强调以下几点：</p>
+<p>缓存可以有多层，比如上面提到的静态缓存处在负载均衡层，分布式缓存处在应用层和数据库层之间，本地缓存处在应用层。我们需要将请求尽量挡在上层，因为越往下层，对于并发的承受能力越差；</p>
+<p>缓存命中率是我们对于缓存最重要的一个监控项，越是热点的数据，缓存的命中率就越高。</p>
+<p>还需要理解的是，缓存不仅仅是一种组件的名字，更是一种设计思想，你可以认为任何能够加速读请求的组件和设计方案都是缓存思想的体现。而这种加速通常是通过两种方式来实现：</p>
+<ul>
+<li>使用更快的介质，比方说课程中提到的内存；</li>
+<li>缓存复杂运算的结果，比方说前面 TLB 的例子就是缓存地址转换的结果。</li>
+</ul>
+<p><strong>在实际工作中碰到“慢”的问题时，缓存就是第一时间需要考虑的。</strong></p>
+<h2 id="缓存的使用姿势（一）：如何选择缓存的读写策略？"><a href="#缓存的使用姿势（一）：如何选择缓存的读写策略？" class="headerlink" title="缓存的使用姿势（一）：如何选择缓存的读写策略？"></a>缓存的使用姿势（一）：如何选择缓存的读写策略？</h2><p>了解缓存使用的几种策略，以及每种策略适用的使用场景是怎样的。本章重点是：</p>
+<ol>
+<li><p>Cache Aside 是我们在使用分布式缓存时最常用的策略，你可以在实际工作中直接拿来使用。</p>
+</li>
+<li><p>Read/Write Through 和 Write Back 策略需要缓存组件的支持，所以比较适合你在实现本地缓存组件的时候使用；</p>
+</li>
+<li><p>Write Back 策略是计算机体系结构中的策略，不过写入策略中的只写缓存，异步写入后端存储的策略倒是有很多的应用场景。</p>
+</li>
+</ol>
+<p>需要注意，以上提到的策略都是标准的使用姿势，在实际开发过程中需要结合实际的业务特点灵活使用甚至加以改造。</p>
+<p>这些业务特点包括但不仅限于：整体的数据量级情况，访问的读写比例的情况，对于数据的不一致时间的容忍度，对于缓存命中率的要求等等。<strong>理论结合实践</strong>，具体情况具体分析，才能得到更好的解决方案。</p>
+<h2 id="缓存的使用姿势（二）：缓存如何做到高可用？"><a href="#缓存的使用姿势（二）：缓存如何做到高可用？" class="headerlink" title="缓存的使用姿势（二）：缓存如何做到高可用？"></a>缓存的使用姿势（二）：缓存如何做到高可用？</h2><p>本章重点是：</p>
+<p>分布式缓存的高可用方案主要有三种，首先是<strong>客户端方案</strong>，一般也称为 Smart Client。我们通过制定一些数据分片和数据读写的策略，可以实现缓存高可用。这种方案的好处是性能没有损耗，缺点是客户端逻辑复杂且在多语言环境下不能复用。</p>
+<p>其次，<strong>中间代理方案</strong>在客户端和缓存节点之间增加了中间层，在性能上会有一些损耗，在代理层会有一些内置的高可用方案，比如 Codis 会使用 Codis Ha 或者 Sentinel。</p>
+<p>最后，<strong>服务端方案</strong>依赖于组件的实现，Memcached 就只支持单机版没有分布式和 HA 的方案，而 Redis 在 2.4 版本提供了 Sentinel 方案可以自动进行主从切换。服务端方案会在运维上增加一些复杂度。</p>
+<p>总体而言，<strong>分布式缓存的三种方案</strong>各有所长，</p>
+<ul>
+<li>有些团队可能在开发过程中已经积累了 Smart Client 上的一些经验；而有些团队在 Redis 运维上经验丰富，就可以推进 Sentinel 方案；有些团队在存储研发方面有些积累，就可以推进中间代理层方案，甚至可以自研适合自己业务场景的代理层组件，</li>
+</ul>
+<p>具体的选择还是要看团队的实际情况而定。</p>
+<h2 id="缓存的使用姿势（三）：缓存穿透了怎么办？"><a href="#缓存的使用姿势（三）：缓存穿透了怎么办？" class="headerlink" title="缓存的使用姿势（三）：缓存穿透了怎么办？"></a>缓存的使用姿势（三）：缓存穿透了怎么办？</h2><p>了解一些解决缓存穿透的方案，可以在发现自己的缓存系统命中率下降时，从中得到一些借鉴的思路。本章重点是：</p>
+<ol>
+<li><p>回种空值是一种最常见的解决思路，实现起来也最简单，如果评估空值缓存占据的缓存空间可以接受，那么可以优先使用这种方案；</p>
+</li>
+<li><p>布隆过滤器会引入一个新的组件，也会引入一些开发上的复杂度和运维上的成本。所以只有在存在海量查询数据库中，不存在数据的请求时才会使用，在使用时也要关注布隆过滤器对内存空间的消耗；</p>
+</li>
+<li><p>对于极热点缓存数据穿透造成的“狗桩效应”，可以通过设置分布式锁或者后台线程定时加载的方式来解决。</p>
+</li>
+</ol>
+<p>除此之外，还需要了解的是，数据库是一个脆弱的资源，它无论是在扩展性、性能还是承担并发的能力上，相比缓存都处于绝对的劣势，所以我们<strong>解决缓存穿透问题的核心目标在于减少对于数据库的并发请求</strong>。了解了这个核心的思想，也许就能在日常工作中找到其他更好的解决缓存穿透问题的方案。</p>
+<h2 id="CDN：静态资源如何加速？"><a href="#CDN：静态资源如何加速？" class="headerlink" title="CDN：静态资源如何加速？"></a>CDN：静态资源如何加速？</h2><p>了解 CDN 对静态资源进行加速的原理和使用的核心技术，本章重点是：</p>
+<ol>
+<li>DNS 技术是 CDN 实现中使用的核心技术，可以将用户的请求映射到 CDN 节点上；</li>
+<li>DNS 解析结果需要做本地缓存，降低 DNS 解析过程的响应时间；</li>
+<li>GSLB 可以给用户返回一个离着他更近的节点，加快静态资源的访问速度。</li>
+</ol>
+<p>作为一个服务端开发人员，我们可能会忽略 CDN 的重要性，对于偶尔出现的 CDN 问题嗤之以鼻，觉得这个不是我们应该关心的内容，这种想法是错的。</p>
+<p>CDN 是我们系统的门面，其<strong>缓存的静态数据</strong>，如图片和视频数据的请求量很可能是接口请求数据的几倍甚至更高，一旦发生故障，对于整体系统的影响是巨大的。</p>
+<p>另外 <strong>CDN 的带宽</strong>历来是我们研发成本的大头，尤其是目前处于小视频和直播风口上，大量的小视频和直播研发团队都在绞尽脑汁地减少 CDN 的成本。</p>
+<p>由此看出，CDN 是我们整体系统至关重要的组成部分，而它作为一种特殊的缓存，其命中率和可用性也是我们服务端开发人员需要重点关注的指标。</p>
+<h2 id="数据的迁移应该如何做？"><a href="#数据的迁移应该如何做？" class="headerlink" title="数据的迁移应该如何做？"></a>数据的迁移应该如何做？</h2><p>本章重点是：</p>
+<p>双写的方案是数据库、Redis 迁移的通用方案，你可以在实际工作中直接加以使用。双写方案中最重要的，是通过数据校验来保证数据的一致性，这样就可以在迁移过程中随时回滚；</p>
+<p>如果你需要将自建机房的数据迁移到云上，那么也可以考虑使用级联复制的方案，这种方案会造成数据的短暂停写，需要在业务低峰期执行；</p>
+<p>缓存的迁移重点，是保证云上缓存的命中率，你可以使用改进版的副本组方式来迁移，在缓存写入的时候，异步写入云上的副本组，在读取时放少量流量到云上副本组，从而又可以迁移部分数据到云上副本组，又能尽量减少穿透给自建机房造成专线延迟的问题。</p>
+<p>如果你作为项目的负责人，那么在迁移的过程中，你一定要制定周密的计划：如果是数据库的迁移，那么数据的校验应该是你最需要花费时间来解决的问题。</p>
+<p>如果是自建机房迁移到云上，那么专线的带宽一定是你迁移过程中的一个瓶颈点，你需要在迁移之前梳理清楚，有哪些调用需要经过专线，占用带宽的情况是怎样的，带宽的延时是否能够满足要求。你的方案中也需要尽量做到在迁移过程中，同机房的服务，调用同机房的缓存和数据库，尽量减少对于专线带宽资源的占用。</p>
+<h1 id="消息队列篇"><a href="#消息队列篇" class="headerlink" title="消息队列篇"></a>消息队列篇</h1><h2 id="消息队列：秒杀时如何处理每秒上万次的下单请求？"><a href="#消息队列：秒杀时如何处理每秒上万次的下单请求？" class="headerlink" title="消息队列：秒杀时如何处理每秒上万次的下单请求？"></a>消息队列：秒杀时如何处理每秒上万次的下单请求？</h2><p>本章重点是：</p>
+<ul>
+<li>削峰填谷是消息队列最主要的作用，但是会造成请求处理的延迟。</li>
+<li>异步处理是提升系统性能的神器，但是你需要分清同步流程和异步流程的边界，同时消息存在着丢失的风险，我们需要考虑如何确保消息一定到达。</li>
+<li>解耦合可以提升你的整体系统的鲁棒性（Robust）。</li>
+</ul>
+<p>当然，在使用消息队列之后虽然可以解决现有的问题，但是系统的复杂度也会上升。比如上面提到的业务流程中，</p>
+<ul>
+<li>同步流程和异步流程的边界在哪里？</li>
+<li>消息是否会丢失，是否会重复？</li>
+<li>请求的延迟如何能够减少？</li>
+<li>消息接收的顺序是否会影响到业务流程的正常执行？</li>
+<li>如果消息处理流程失败了之后是否需要补发？</li>
+</ul>
+<p>后面章节会讲解两个主要问题：一个是如何处理消息的丢失和重复，另一个是如何减少消息的延迟。</p>
+<p>引入了消息队列的同时也会引入了新的问题，需要新的方案来解决，这就是系统设计的挑战，也是系统设计独有的魅力。</p>
+<h2 id="消息投递：如何保证消息仅仅被消费一次？"><a href="#消息投递：如何保证消息仅仅被消费一次？" class="headerlink" title="消息投递：如何保证消息仅仅被消费一次？"></a>消息投递：如何保证消息仅仅被消费一次？</h2><p>本章重点是：</p>
+<ul>
+<li>消息的丢失可以通过生产端的重试、消息队列配置集群模式，以及消费端合理处理消费进度三个方式来解决。</li>
+<li>为了解决消息的丢失通常会造成性能上的问题以及消息的重复问题。</li>
+<li>通过<strong>保证消息处理的幂等性</strong>可以解决消息的重复问题。</li>
+</ul>
+<p>并不是说消息丢失一定不能被接受，应该说，在允许消息丢失的情况下，消息队列的性能更好，方案实现的复杂度也最低。比如像是日志处理的场景，日志存在的意义在于排查系统的问题，而系统出现问题的几率不高，偶发的丢失几条日志是可以接受的。</p>
+<p>所以方案设计看场景，这是一切设计的原则，不能把所有的消息队列都配置成防止消息丢失的方式，也不能要求所有的业务处理逻辑都要支持幂等性，这样会给开发和运维带来额外的负担。</p>
+<h2 id="消息队列：如何降低消息队列系统中消息的延迟？"><a href="#消息队列：如何降低消息队列系统中消息的延迟？" class="headerlink" title="消息队列：如何降低消息队列系统中消息的延迟？"></a>消息队列：如何降低消息队列系统中消息的延迟？</h2><p>了解如何提升消息队列的性能来降低消息消费的延迟，本章重点是：</p>
+<ul>
+<li>我们可以使用消息队列提供的工具，或者通过发送监控消息的方式，来监控消息的延迟情况；</li>
+<li>横向扩展消费者是提升消费处理能力的重要方式；</li>
+<li>选择高性能的数据存储方式，配合零拷贝技术，可以提升消息的消费性能。</li>
+</ul>
+<p>其实，队列是一种常用的组件，只要涉及到队列，任务的堆积就是一个不可忽视的问题，很多故障都是源于此。</p>
+<p>案例：某个故障，前期只是因为数据库性能衰减有少量的慢请求，结果这些慢请求占满了 Tomcat 线程池，导致整体服务的不可用。如果能对 Tomcat 线程池的任务堆积情况有实时地监控，或者说对线程池有一些保护策略，比方说线程全部使用之后丢弃请求，也许就会避免故障的发生。因此实际工作中，只要有队列就要监控它的堆积情况，把问题消灭在萌芽之中。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E9%AB%98%E5%B9%B6%E5%8F%91/" rel="tag"># 高并发</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2019/11/21/mysql/" rel="next" title="MySQL 优化笔记">
+                  <i class="fa fa-chevron-left"></i> MySQL 优化笔记
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2019/11/23/redis/" rel="prev" title="Redis 快速上手">
+                  Redis 快速上手 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#基础篇"><span class="nav-number">1.</span> <span class="nav-text">基础篇</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#高并发系统：它的通用设计方法是什么？"><span class="nav-number">1.1.</span> <span class="nav-text">高并发系统：它的通用设计方法是什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#架构分层：我们为什么一定要这么做？"><span class="nav-number">1.2.</span> <span class="nav-text">架构分层：我们为什么一定要这么做？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#系统设计目标（一）：如何提升系统性能？"><span class="nav-number">1.3.</span> <span class="nav-text">系统设计目标（一）：如何提升系统性能？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#系统设计目标（二）：系统怎样做到高可用？"><span class="nav-number">1.4.</span> <span class="nav-text">系统设计目标（二）：系统怎样做到高可用？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#系统设计目标（三）：如何让系统易于扩展？"><span class="nav-number">1.5.</span> <span class="nav-text">系统设计目标（三）：如何让系统易于扩展？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数据库篇"><span class="nav-number">2.</span> <span class="nav-text">数据库篇</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#池化技术：如何减少频繁创建数据库连接的性能损耗？"><span class="nav-number">2.1.</span> <span class="nav-text">池化技术：如何减少频繁创建数据库连接的性能损耗？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据库优化方案（一）：查询请求增加时，如何做主从分离？"><span class="nav-number">2.2.</span> <span class="nav-text">数据库优化方案（一）：查询请求增加时，如何做主从分离？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据库优化方案（二）：写入数据量增加时，如何实现分库分表？"><span class="nav-number">2.3.</span> <span class="nav-text">数据库优化方案（二）：写入数据量增加时，如何实现分库分表？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#发号器：如何保证分库分表后ID的全局唯一性？"><span class="nav-number">2.4.</span> <span class="nav-text">发号器：如何保证分库分表后ID的全局唯一性？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NoSQL：在高并发场景下，数据库和NoSQL如何做到互补？"><span class="nav-number">2.5.</span> <span class="nav-text">NoSQL：在高并发场景下，数据库和NoSQL如何做到互补？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#缓存篇"><span class="nav-number">3.</span> <span class="nav-text">缓存篇</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#缓存：数据库成为瓶颈后，动态数据的查询要如何加速？"><span class="nav-number">3.1.</span> <span class="nav-text">缓存：数据库成为瓶颈后，动态数据的查询要如何加速？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#缓存的使用姿势（一）：如何选择缓存的读写策略？"><span class="nav-number">3.2.</span> <span class="nav-text">缓存的使用姿势（一）：如何选择缓存的读写策略？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#缓存的使用姿势（二）：缓存如何做到高可用？"><span class="nav-number">3.3.</span> <span class="nav-text">缓存的使用姿势（二）：缓存如何做到高可用？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#缓存的使用姿势（三）：缓存穿透了怎么办？"><span class="nav-number">3.4.</span> <span class="nav-text">缓存的使用姿势（三）：缓存穿透了怎么办？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CDN：静态资源如何加速？"><span class="nav-number">3.5.</span> <span class="nav-text">CDN：静态资源如何加速？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据的迁移应该如何做？"><span class="nav-number">3.6.</span> <span class="nav-text">数据的迁移应该如何做？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#消息队列篇"><span class="nav-number">4.</span> <span class="nav-text">消息队列篇</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#消息队列：秒杀时如何处理每秒上万次的下单请求？"><span class="nav-number">4.1.</span> <span class="nav-text">消息队列：秒杀时如何处理每秒上万次的下单请求？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#消息投递：如何保证消息仅仅被消费一次？"><span class="nav-number">4.2.</span> <span class="nav-text">消息投递：如何保证消息仅仅被消费一次？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#消息队列：如何降低消息队列系统中消息的延迟？"><span class="nav-number">4.3.</span> <span class="nav-text">消息队列：如何降低消息队列系统中消息的延迟？</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">chenlx</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">chenlx</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

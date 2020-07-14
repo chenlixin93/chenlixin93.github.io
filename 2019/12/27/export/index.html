@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="alternate" href="/atom.xml" title="chenlx" type="application/atom+xml">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="业务场景业务部门每月都需要导出上个月（按规定格式处理）的销售数据进行二次统计分析">
+<meta property="og:type" content="article">
+<meta property="og:title" content="导出处理耗时的文件">
+<meta property="og:url" content="http:&#x2F;&#x2F;chenlixin.site&#x2F;2019&#x2F;12&#x2F;27&#x2F;export&#x2F;index.html">
+<meta property="og:site_name" content="chenlx">
+<meta property="og:description" content="业务场景业务部门每月都需要导出上个月（按规定格式处理）的销售数据进行二次统计分析">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https:&#x2F;&#x2F;cdn.learnku.com&#x2F;uploads&#x2F;images&#x2F;201912&#x2F;27&#x2F;1875&#x2F;0hr6hosaf4.png!large">
+<meta property="og:updated_time" content="2020-07-14T05:00:11.829Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;cdn.learnku.com&#x2F;uploads&#x2F;images&#x2F;201912&#x2F;27&#x2F;1875&#x2F;0hr6hosaf4.png!large">
+
+<link rel="canonical" href="http://chenlixin.site/2019/12/27/export/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>导出处理耗时的文件 | chenlx</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">chenlx</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://chenlixin.site/2019/12/27/export/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="chenlx">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="chenlx">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          导出处理耗时的文件
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-12-27 20:24:31" itemprop="dateCreated datePublished" datetime="2019-12-27T20:24:31+08:00">2019-12-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-07-14 13:00:11" itemprop="dateModified" datetime="2020-07-14T13:00:11+08:00">2020-07-14</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="业务场景"><a href="#业务场景" class="headerlink" title="业务场景"></a>业务场景</h3><p>业务部门每月都需要导出上个月（按规定格式处理）的销售数据进行二次统计分析</p>
+<a id="more"></a>
+
+<h3 id="需求分析"><a href="#需求分析" class="headerlink" title="需求分析"></a>需求分析</h3><p>导出频率：每月；导出范围：上个月；按规定格式处理：比较耗时；</p>
+<p>本地服务器：每处理100条数据耗时20秒，导出是实时统计，这部分不做更优化处理</p>
+<p>线上服务器：未知</p>
+<h3 id="初步设计"><a href="#初步设计" class="headerlink" title="初步设计"></a>初步设计</h3><p>耗时任务即时导出都是不现实的做法；定时任务导出excel，具体文件可存放本地或云端，界面上提供链接下载。</p>
+<h3 id="导出Excel代码实现"><a href="#导出Excel代码实现" class="headerlink" title="导出Excel代码实现"></a>导出Excel代码实现</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">//https://github.com/Maatwebsite/Laravel-Excel</span><br><span class="line">use Excel;</span><br><span class="line"></span><br><span class="line">.</span><br><span class="line">.</span><br><span class="line">.</span><br><span class="line">//导出excel逻辑</span><br><span class="line">$file_name = &apos;&apos;;</span><br><span class="line">$sheet_name = &apos;&apos;;</span><br><span class="line">$excel = Excel::create($file_name);</span><br><span class="line">$excel-&gt;sheet($sheet_name);</span><br><span class="line"></span><br><span class="line">$current_sheet_obj = $excel-&gt;setActiveSheetIndex(0)-&gt;getSheet();</span><br><span class="line">$first_column = [];//存放列名</span><br><span class="line">$current_sheet_obj-&gt;row(1, $first_column);</span><br><span class="line"></span><br><span class="line">$rows = [];//数据源</span><br><span class="line">$current_sheet_row = 2;</span><br><span class="line">foreach ($rows as $row) &#123;</span><br><span class="line">    //耗时处理操作得到$row_arr </span><br><span class="line">    ...</span><br><span class="line">	</span><br><span class="line">    //插入数据</span><br><span class="line">    $current_sheet_obj-&gt;row($current_sheet_row, $row_arr);</span><br><span class="line">    $current_sheet_row++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="导出Excel存在问题"><a href="#导出Excel存在问题" class="headerlink" title="导出Excel存在问题"></a>导出Excel存在问题</h3><p>已知线上服务器，当数据量到达一定程度时，无法顺利导出excel</p>
+<h3 id="优化设计"><a href="#优化设计" class="headerlink" title="优化设计"></a>优化设计</h3><p>前提：没有规定必须要excel做复杂的样式；</p>
+<p>放弃直接导出excel，先导出txt文本文件，再手动复制到excel；Linux下只要保证有制表符 “\t” 和换行符 “\n” 即可。</p>
+<h3 id="导出txt代码实现"><a href="#导出txt代码实现" class="headerlink" title="导出txt代码实现"></a>导出txt代码实现</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">use Storage;</span><br><span class="line"></span><br><span class="line">.</span><br><span class="line">.</span><br><span class="line">.</span><br><span class="line">//不限制执行时间</span><br><span class="line">set_time_limit(0);</span><br><span class="line">//最大内存</span><br><span class="line">ini_set(&apos;memory_limit&apos;, &apos;-1&apos;);</span><br><span class="line"></span><br><span class="line">//导出txt逻辑</span><br><span class="line">$file_path = $file_name.&quot;.txt&quot;;</span><br><span class="line">$str = &quot;&quot;;//拼接表头字符</span><br><span class="line">Storage::disk(&apos;local&apos;)-&gt;put($file_path, $str);</span><br><span class="line"></span><br><span class="line">//以二进制的方式追加读写</span><br><span class="line">$file = fopen(storage_path().$file_path, &quot;a+b&quot;);</span><br><span class="line"></span><br><span class="line">$str = &quot;&quot;;</span><br><span class="line">$rows = [];//数据源</span><br><span class="line">foreach ($rows as  $row) &#123;</span><br><span class="line">    //耗时处理操作得到$str</span><br><span class="line">    ...</span><br><span class="line">	</span><br><span class="line">	//每处理1条数据就写入一次，数据量大时，建议批量写入</span><br><span class="line">	fwrite($file, $str.&quot;\n&quot;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">fclose($file);</span><br></pre></td></tr></table></figure>
+
+<h3 id="导出txt存在问题"><a href="#导出txt存在问题" class="headerlink" title="导出txt存在问题"></a>导出txt存在问题</h3><p>使用Storage::disk(‘local’)-&gt;append($file_path, $str)，数据量到达一定程度时，仍提示内存不足</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">local.ERROR: exception &apos;Symfony\Component\Debug\Exception\FatalErrorException&apos; with message &apos;Out of memory (allocated 1197211648) (tried to allocate 96374400 bytes)&apos; in /var/www/my_project/vendor/league/flysystem/src/Util/MimeType.php:28 Stack trace: #0 &#123;main&#125; [] []</span><br></pre></td></tr></table></figure>
+<p>解决：</p>
+<p>使用fopen($file_path, “a+b”); //二进制模式追加到文件末尾；</p>
+<p>分批处理，每处理100条追加一次文本</p>
+<h3 id="最终优化效果"><a href="#最终优化效果" class="headerlink" title="最终优化效果"></a>最终优化效果</h3><p>本地服务器：最终顺利导出5W条处理耗时的数据，花费3小时左右。</p>
+<p>通过top指令观察，可以看到本地测试服务器（内存1G左右）比较稳定，没有出现内存不足的情况</p>
+<p><img src="https://cdn.learnku.com/uploads/images/201912/27/1875/0hr6hosaf4.png!large" alt="导出处理耗时的文件"></p>
+<p>线上服务器：导出5W条处理耗时数据，仅20秒不到，效果还不错:)</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2019/12/17/mq/" rel="next" title="消息队列学习脑图">
+                  <i class="fa fa-chevron-left"></i> 消息队列学习脑图
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2020/01/06/linux/" rel="prev" title="Linux 性能优化笔记">
+                  Linux 性能优化笔记 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#业务场景"><span class="nav-number">1.</span> <span class="nav-text">业务场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#需求分析"><span class="nav-number">2.</span> <span class="nav-text">需求分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#初步设计"><span class="nav-number">3.</span> <span class="nav-text">初步设计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#导出Excel代码实现"><span class="nav-number">4.</span> <span class="nav-text">导出Excel代码实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#导出Excel存在问题"><span class="nav-number">5.</span> <span class="nav-text">导出Excel存在问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#优化设计"><span class="nav-number">6.</span> <span class="nav-text">优化设计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#导出txt代码实现"><span class="nav-number">7.</span> <span class="nav-text">导出txt代码实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#导出txt存在问题"><span class="nav-number">8.</span> <span class="nav-text">导出txt存在问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#最终优化效果"><span class="nav-number">9.</span> <span class="nav-text">最终优化效果</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">chenlx</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">chenlx</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
